@@ -788,14 +788,6 @@
             const hasRoutes = scheduleByDay.some(day => day.routes.length > 0);
             const hasBoulders = scheduleByDay.some(day => day.boulders.length > 0);
 
-            if (hasRoutes) {
-                html += generatePage('routes (level 1)', scheduleByDay, dateRange, 'routes', startSunday);
-            }
-
-            if (hasBoulders) {
-                html += generatePage('boulders (level 2)', scheduleByDay, dateRange, 'boulders', startSunday);
-            }
-
             if (html === '') {
                 showMessage('No schedule data found for selected gym', 'error');
                 return;
