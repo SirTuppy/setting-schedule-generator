@@ -284,7 +284,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>ðŸ§— Setting Schedule Generator</h1>
+        <h1>Setting Schedule Generator</h1>
         
         <div class="controls">
             <div class="control-group">
@@ -302,7 +302,7 @@
         </div>
 
         <div class="upload-area" id="upload-area">
-            <p style="margin-bottom: 10px; font-weight: 600; color: #1e3a5f;">ðŸ“ Upload Humanity CSV</p>
+            <p style="margin-bottom: 10px; font-weight: 600; color: #1e3a5f;">Upload Humanity CSV</p>
             <p style="font-size: 14px; color: #666;">Drag & drop or click to browse</p>
             <input type="file" id="csv-input" accept=".csv" style="display: none;">
         </div>
@@ -956,9 +956,9 @@
                 } else {
                     // Draw empty row with date
                     ctx.fillText(dateStr, tableCoords.date.x, y);
-                    ctx.fillText('â€”', tableCoords.location.x, y);
-                    ctx.fillText('â€”', tableCoords.climbType.x, y);
-                    ctx.fillText('â€”', tableCoords.setters.x, y);
+                    ctx.fillText('—', tableCoords.location.x, y);
+                    ctx.fillText('—', tableCoords.climbType.x, y);
+                    ctx.fillText('—', tableCoords.setters.x, y);
                 }
             });
         }
