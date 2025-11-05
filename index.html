@@ -647,6 +647,15 @@
                     // Draw background
                     ctx.drawImage(img, 0, 0, 791, 1024);
 
+                    //Render the date range header
+                    if (coords.header) {
+                        ctx.font = 'bold 24px Montserrat, Arial, sans-serif';
+                        ctx.fillStyle = '#1e3a5f'; // Same as your table text color
+                        ctx.textAlign = 'right'; // Aligns the text to the right of the x-coordinate
+                        ctx.fillText(dateRange, coords.header.x, coords.header.y);
+                        ctx.textAlign = 'left';  // IMPORTANT: Reset alignment for the table text
+                    }
+
                     // Get coordinates for this gym/type
                     const gymCoords = templateCoords[selectedGym];
                     if (!gymCoords) {
