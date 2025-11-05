@@ -284,7 +284,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🧗 Setting Schedule Generator</h1>
+        <h1>ðŸ§— Setting Schedule Generator</h1>
         
         <div class="controls">
             <div class="control-group">
@@ -302,7 +302,7 @@
         </div>
 
         <div class="upload-area" id="upload-area">
-            <p style="margin-bottom: 10px; font-weight: 600; color: #1e3a5f;">📁 Upload Humanity CSV</p>
+            <p style="margin-bottom: 10px; font-weight: 600; color: #1e3a5f;">ðŸ“ Upload Humanity CSV</p>
             <p style="font-size: 14px; color: #666;">Drag & drop or click to browse</p>
             <input type="file" id="csv-input" accept=".csv" style="display: none;">
         </div>
@@ -611,7 +611,7 @@
                 skipEmptyLines: true,
                 complete: (results) => {
                     csvData = results.data;
-                    showMessage(`✓ CSV loaded successfully (${csvData.length} rows)`, 'info');
+                    showMessage(`âœ“ CSV loaded successfully (${csvData.length} rows)`, 'info');
                     checkReady();
                 },
                 error: (error) => {
@@ -660,10 +660,10 @@
         }
 
         function getClimbType(walls) {
-            if (walls.length === 0) return '—';
+            if (walls.length === 0) return 'â€”';
             
             const types = walls.map(w => wallsDesign[w]?.climb_type).filter(t => t);
-            if (types.length === 0) return '—';
+            if (types.length === 0) return 'â€”';
 
             // Count occurrences
             const counts = {};
@@ -767,7 +767,7 @@
             window.scheduleStartSunday = startSunday;
 
             // Organize by day of week (Sun=0, Mon=1, Tue=2, etc.)
-            // Create 14 slots (2 weeks × 7 days)
+            // Create 14 slots (2 weeks Ã— 7 days)
             const scheduleByDay = Array(14).fill(null).map(() => ({ routes: [], boulders: [] }));
 
             scheduleData.forEach(item => {
@@ -787,6 +787,14 @@
             // Check if we have any routes or boulders
             const hasRoutes = scheduleByDay.some(day => day.routes.length > 0);
             const hasBoulders = scheduleByDay.some(day => day.boulders.length > 0);
+
+            if (hasRoutes) {
+                html += generatePage('routes (level 1)', scheduleByDay, dateRange, 'routes', startSunday);
+            }
+
+            if (hasBoulders) {
+                html += generatePage('boulders (level 2)', scheduleByDay, dateRange, 'boulders', startSunday);
+            }
 
             if (html === '') {
                 showMessage('No schedule data found for selected gym', 'error');
@@ -844,7 +852,7 @@
             // Store canvases for download
             window.generatedCanvases = canvases;
 
-            showMessage('✓ Schedule generated successfully!', 'info');
+            showMessage('âœ“ Schedule generated successfully!', 'info');
         }
 
         async function renderPage(type, scheduleByDay, dateRange) {
@@ -948,9 +956,9 @@
                 } else {
                     // Draw empty row with date
                     ctx.fillText(dateStr, tableCoords.date.x, y);
-                    ctx.fillText('—', tableCoords.location.x, y);
-                    ctx.fillText('—', tableCoords.climbType.x, y);
-                    ctx.fillText('—', tableCoords.setters.x, y);
+                    ctx.fillText('â€”', tableCoords.location.x, y);
+                    ctx.fillText('â€”', tableCoords.climbType.x, y);
+                    ctx.fillText('â€”', tableCoords.setters.x, y);
                 }
             });
         }
@@ -980,6 +988,100 @@
                     URL.revokeObjectURL(url);
                 });
             });
+        }
+
+        function generatePage(sectionTitle, scheduleByDay, dateRange, type, startSunday) {
+            // Split 14 days into two columns (7 days each = 1 week per column)
+            const week1 = scheduleByDay.slice(0, 7);
+            const week2 = scheduleByDay.slice(7, 14);
+
+            // Determine background image path
+            const pageType = type === 'routes' ? 'routes' : 'boulders';
+            const bgImage = `templates/${selectedGym}_${pageType}.png`;
+
+            return `
+                <div class="schedule-page">
+                    <img src="${bgImage}" class="schedule-background" alt="${selectedGym} ${pageType} map" />
+                    
+                    <div class="schedule-content">
+                        <div class="schedule-header">
+                            <div class="logo-section">
+                                <div class="logo"></div>
+                                <div class="brand">movement<br><span style="font-size: 11px; font-weight: 400;">CLIMBING â€¢ YOGA â€¢ FITNESS</span></div>
+                            </div>
+                            <div class="schedule-title">
+                                <h2>setting schedule</h2>
+                                <div class="date-range">${dateRange}</div>
+                            </div>
+                        </div>
+
+                        <div class="section-title">â€º ${sectionTitle}</div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            ${generateTable(week1, type, startSunday, 0)}
+                            ${generateTable(week2, type, startSunday, 7)}
+                        </div>
+
+                        <div class="footer-note">
+                            This map reflects the general plan for what areas of the gym will be reset throughout each week.<br>
+                            Daily setting operations are subject to change based on unforeseen impacts and immediate needs in the gym.
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateTable(weekData, type, startSunday, weekOffset) {
+            let rows = '';
+            
+            weekData.forEach((day, dayIndex) => {
+                const currentDate = new Date(startSunday);
+                currentDate.setDate(currentDate.getDate() + weekOffset + dayIndex);
+                const dateStr = formatDate(currentDate);
+
+                const items = day[type] || [];
+                
+                if (items.length > 0) {
+                    // Combine all items for this day
+                    const locations = items.map(i => i.location).join(', ');
+                    const climbType = items[0].climbType; // Use first item's climb type
+                    const setterCount = Math.max(...items.map(i => i.setterCount)); // Max setters
+                    
+                    rows += `
+                        <tr>
+                            <td>${dateStr}</td>
+                            <td>${locations}</td>
+                            <td>${climbType}</td>
+                            <td>${setterCount}</td>
+                        </tr>
+                    `;
+                } else {
+                    rows += `
+                        <tr>
+                            <td>${dateStr}</td>
+                            <td>â€”</td>
+                            <td>â€”</td>
+                            <td>â€”</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            return `
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>LOCATION</th>
+                            <th>CLIMB TYPE</th>
+                            <th># OF SETTERS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            `;
         }
     </script>
 </body>
