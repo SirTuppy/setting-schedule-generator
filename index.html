@@ -611,7 +611,7 @@
                 skipEmptyLines: true,
                 complete: (results) => {
                     csvData = results.data;
-                    showMessage(`âœ“ CSV loaded successfully (${csvData.length} rows)`, 'info');
+                    showMessage(`CSV loaded successfully (${csvData.length} rows)`, 'info');
                     checkReady();
                 },
                 error: (error) => {
@@ -660,10 +660,10 @@
         }
 
         function getClimbType(walls) {
-            if (walls.length === 0) return 'â€”';
+            if (walls.length === 0) return '-';
             
             const types = walls.map(w => wallsDesign[w]?.climb_type).filter(t => t);
-            if (types.length === 0) return 'â€”';
+            if (types.length === 0) return '-';
 
             // Count occurrences
             const counts = {};
@@ -852,7 +852,7 @@
             // Store canvases for download
             window.generatedCanvases = canvases;
 
-            showMessage('âœ“ Schedule generated successfully!', 'info');
+            showMessage('Schedule generated successfully!', 'info');
         }
 
         async function renderPage(type, scheduleByDay, dateRange) {
@@ -956,9 +956,9 @@
                 } else {
                     // Draw empty row with date
                     ctx.fillText(dateStr, tableCoords.date.x, y);
-                    ctx.fillText('—', tableCoords.location.x, y);
-                    ctx.fillText('—', tableCoords.climbType.x, y);
-                    ctx.fillText('—', tableCoords.setters.x, y);
+                    ctx.fillText('-', tableCoords.location.x, y);
+                    ctx.fillText('-', tableCoords.climbType.x, y);
+                    ctx.fillText('-', tableCoords.setters.x, y);
                 }
             });
         }
