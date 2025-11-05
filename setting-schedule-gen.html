@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setting Schedule Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #1e3a5f;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        select, input[type="file"] {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        select:focus, input[type="file"]:focus {
+            outline: none;
+            border-color: #4db8a8;
+        }
+
+        .upload-area {
+            border: 2px dashed #4db8a8;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background: #f9fffe;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #f0fffe;
+            border-color: #3da799;
+        }
+
+        .upload-area.dragover {
+            background: #e6fffc;
+            border-color: #2d9688;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #4db8a8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3da799;
+        }
+
+        .btn-secondary {
+            background: #1e3a5f;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #152a45;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #preview {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .schedule-page {
+            background: white;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            page-break-after: always;
+            position: relative;
+            min-height: 1400px;
+        }
+
+        .schedule-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 1;
+            z-index: 0;
+        }
+
+        .schedule-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: #4db8a8;
+            border-radius: 50%;
+        }
+
+        .brand {
+            font-weight: 700;
+            color: #1e3a5f;
+            font-size: 18px;
+        }
+
+        .schedule-title {
+            text-align: right;
+        }
+
+        .schedule-title h2 {
+            color: #1e3a5f;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .date-range {
+            color: #1e3a5f;
+            font-size: 20px;
+        }
+
+        .section-title {
+            color: #4db8a8;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .schedule-table th {
+            background: #1e3a5f;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .schedule-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .schedule-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .schedule-table tbody tr:nth-child(odd) {
+            background: white;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .controls, .buttons {
+                display: none !important;
+            }
+            #preview {
+                display: block !important;
+            }
+            .schedule-page {
+                border: none;
+                margin: 0;
+                padding: 40px;
+            }
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            padding: 15px;
+            border-radius: 4px;
+            color: #c33;
+            margin-top: 20px;
+        }
+
+        .info {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            padding: 15px;
+            border-radius: 4px;
+            color: #0050b3;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧗 Setting Schedule Generator</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="gym-select">Select Gym Location</label>
+                <select id="gym-select">
+                    <option value="">-- Choose Gym --</option>
+                    <option value="DSN">Design (DSN)</option>
+                    <option value="PLN">Plano (PLN)</option>
+                    <option value="DTN">Denton (DTN)</option>
+                    <option value="FTW">Fort Worth (FTW)</option>
+                    <option value="GVN">Grapevine (GVN)</option>
+                    <option value="HIL">Hillcrest (HIL)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="upload-area" id="upload-area">
+            <p style="margin-bottom: 10px; font-weight: 600; color: #1e3a5f;">📁 Upload Humanity CSV</p>
+            <p style="font-size: 14px; color: #666;">Drag & drop or click to browse</p>
+            <input type="file" id="csv-input" accept=".csv" style="display: none;">
+        </div>
+
+        <div class="buttons">
+            <button class="btn-primary" id="generate-btn" disabled>Generate Schedule</button>
+            <button class="btn-secondary" id="download-btn" disabled>Download for Instagram</button>
+            <button class="btn-secondary" id="print-btn" disabled>Print / Save PDF</button>
+        </div>
+
+        <div id="messages"></div>
+        <div id="preview"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script>
+        // Template coordinates for text placement (estimated for 791x1024 images)
+        const templateCoords = {
+            'DSN': {
+                'routes': {
+                    tableTop: 775,
+                    rowHeight: 27,
+                    leftTable: {
+                        date: { x: 55, width: 42 },
+                        location: { x: 94, width: 122 },
+                        climbType: { x: 232, width: 67 },
+                        setters: { x: 315, width: 52 }
+                    },
+                    rightTable: {
+                        date: { x: 418, width: 42 },
+                        location: { x: 457, width: 122 },
+                        climbType: { x: 595, width: 67 },
+                        setters: { x: 678, width: 52 }
+                    }
+                },
+                'boulders': {
+                    tableTop: 775,
+                    rowHeight: 27,
+                    leftTable: {
+                        date: { x: 55, width: 42 },
+                        location: { x: 94, width: 122 },
+                        climbType: { x: 232, width: 67 },
+                        setters: { x: 315, width: 52 }
+                    },
+                    rightTable: {
+                        date: { x: 418, width: 42 },
+                        location: { x: 457, width: 122 },
+                        climbType: { x: 595, width: 67 },
+                        setters: { x: 678, width: 52 }
+                    }
+                }
+            },
+            'HIL': {
+                'boulders': {
+                    tableTop: 775,
+                    rowHeight: 27,
+                    leftTable: {
+                        date: { x: 55, width: 42 },
+                        location: { x: 94, width: 122 },
+                        climbType: { x: 232, width: 67 },
+                        setters: { x: 315, width: 52 }
+                    },
+                    rightTable: {
+                        date: { x: 418, width: 42 },
+                        location: { x: 457, width: 122 },
+                        climbType: { x: 595, width: 67 },
+                        setters: { x: 678, width: 52 }
+                    }
+                }
+            },
+            'DTN': {
+                'boulders': {
+                    tableTop: 775,
+                    rowHeight: 27,
+                    leftTable: {
+                        date: { x: 55, width: 42 },
+                        location: { x: 94, width: 122 },
+                        climbType: { x: 232, width: 67 },
+                        setters: { x: 315, width: 52 }
+                    },
+                    rightTable: {
+                        date: { x: 418, width: 42 },
+                        location: { x: 457, width: 122 },
+                        climbType: { x: 595, width: 67 },
+                        setters: { x: 678, width: 52 }
+                    }
+                }
+            },
+            'FTW': {
+                'boulders': {
+                    tableTop: 775,
+                    rowHeight: 27,
+                    leftTable: {
+                        date: { x: 55, width: 42 },
+                        location: { x: 94, width: 122 },
+                        climbType: { x: 232, width: 67 },
+                        setters: { x: 315, width: 52 }
+                    },
+                    rightTable: {
+                        date: { x: 418, width: 42 },
+                        location: { x: 457, width: 122 },
+                        climbType: { x: 595, width: 67 },
+                        setters: { x: 678, width: 52 }
+                    }
+                }
+            },
+            'GVN': {
+                'routes': {
+                    tableTop: 775,
+                    rowHeight: 27,
+                    leftTable: {
+                        date: { x: 55, width: 42 },
+                        location: { x: 94, width: 122 },
+                        climbType: { x: 232, width: 67 },
+                        setters: { x: 315, width: 52 }
+                    },
+                    rightTable: {
+                        date: { x: 418, width: 42 },
+                        location: { x: 457, width: 122 },
+                        climbType: { x: 595, width: 67 },
+                        setters: { x: 678, width: 52 }
+                    }
+                }
+            }
+        };
+
+        const wallsDesign = {
+            // Design gym walls
+            "ziggy": {"type": "rope", "climb_type": "Slab"},
+            "stardust": {"type": "rope", "climb_type": "Slab"},
+            "sandy beaches": {"type": "rope", "climb_type": "Vert"},
+            "beaches": {"type": "rope", "climb_type": "Vert"},
+            "sunset slab": {"type": "rope", "climb_type": "Slab"},
+            "cardinal": {"type": "rope", "climb_type": "Slab"},
+            "sunrise": {"type": "rope", "climb_type": "Vert"},
+            "arete": {"type": "rope", "climb_type": "Vert"},
+            "easter island": {"type": "rope", "climb_type": "Vert"},
+            "island": {"type": "rope", "climb_type": "Vert"},
+            "undertow": {"type": "rope", "climb_type": "Steep"},
+            "hang 10": {"type": "rope", "climb_type": "Vert"},
+            "hang": {"type": "rope", "climb_type": "Vert"},
+            "tidal wave": {"type": "rope", "climb_type": "Overhang"},
+            "marianas trench": {"type": "rope", "climb_type": "Vert"},
+            "trench": {"type": "rope", "climb_type": "Vert"},
+            "arch": {"type": "rope", "climb_type": "Steep"},
+            "the reef": {"type": "rope", "climb_type": "Vert"},
+            "reef": {"type": "rope", "climb_type": "Vert"},
+            
+            // Grapevine walls
+            "spray wall": {"type": "boulder", "climb_type": "Vert"},
+            "canyon left": {"type": "rope", "climb_type": "Vert"},
+            "canyon right": {"type": "rope", "climb_type": "Vert"},
+            "cove": {"type": "rope", "climb_type": "Vert"},
+            "flank": {"type": "rope", "climb_type": "Vert"},
+            "peninsula left": {"type": "rope", "climb_type": "Vert"},
+            "peninsula mid": {"type": "rope", "climb_type": "Vert"},
+            "peninsula right": {"type": "rope", "climb_type": "Vert"},
+            "speed wall": {"type": "rope", "climb_type": "Vert"},
+            "steep left": {"type": "rope", "climb_type": "Vert"},
+            "steep right": {"type": "rope", "climb_type": "Vert"},
+            
+            // Plano walls
+            "kids wall": {"type": "rope", "climb_type": "Vert"},
+            "north a": {"type": "rope", "climb_type": "Vert"},
+            "north b": {"type": "rope", "climb_type": "Vert"},
+            "north c": {"type": "rope", "climb_type": "Vert"},
+            "north d": {"type": "rope", "climb_type": "Vert"},
+            "north e": {"type": "rope", "climb_type": "Vert"},
+            "south left": {"type": "rope", "climb_type": "Vert"},
+            "south mid": {"type": "rope", "climb_type": "Vert"},
+            "south right": {"type": "rope", "climb_type": "Vert"},
+            "the slab": {"type": "rope", "climb_type": "Vert"},
+            "tower a": {"type": "rope", "climb_type": "Vert"},
+            "tower b": {"type": "rope", "climb_type": "Vert"},
+            "tower c": {"type": "rope", "climb_type": "Vert"},
+            "tower d": {"type": "rope", "climb_type": "Vert"},
+            
+            // Denton walls
+            "b1-titanic": {"type": "boulder", "climb_type": "Vert"},
+            "titanic": {"type": "boulder", "climb_type": "Vert"},
+            "b2-ned": {"type": "boulder", "climb_type": "Vert"},
+            "ned": {"type": "boulder", "climb_type": "Vert"},
+            "b3-dusty": {"type": "boulder", "climb_type": "Vert"},
+            "dusty": {"type": "boulder", "climb_type": "Vert"},
+            "b4-lucky": {"type": "boulder", "climb_type": "Vert"},
+            "lucky": {"type": "boulder", "climb_type": "Vert"},
+            "b5-three rivers": {"type": "boulder", "climb_type": "Vert"},
+            "three rivers": {"type": "boulder", "climb_type": "Vert"},
+            "b6-corner office": {"type": "boulder", "climb_type": "Vert"},
+            "corner office": {"type": "boulder", "climb_type": "Vert"},
+            "b7-goiter": {"type": "boulder", "climb_type": "Vert"},
+            "goiter": {"type": "boulder", "climb_type": "Vert"},
+            "b8-deception": {"type": "boulder", "climb_type": "Vert"},
+            "deception": {"type": "boulder", "climb_type": "Vert"},
+            "b9-prowl": {"type": "boulder", "climb_type": "Vert"},
+            "prowl": {"type": "boulder", "climb_type": "Vert"},
+            "b10-aaa": {"type": "boulder", "climb_type": "Vert"},
+            "aaa": {"type": "boulder", "climb_type": "Vert"},
+            "b11-aab": {"type": "boulder", "climb_type": "Vert"},
+            "b12-aab": {"type": "boulder", "climb_type": "Vert"},
+            "aab": {"type": "boulder", "climb_type": "Vert"},
+            
+            // Generic boulder walls (used by multiple gyms)
+            "a1": {"type": "boulder", "climb_type": "Slab"},
+            "a2": {"type": "boulder", "climb_type": "Slab"},
+            "a3": {"type": "boulder", "climb_type": "Vert"},
+            "a4": {"type": "boulder", "climb_type": "Vert"},
+            "a5": {"type": "boulder", "climb_type": "Overhang"},
+            "a6": {"type": "boulder", "climb_type": "Steep"},
+            "a7": {"type": "boulder", "climb_type": "Steep"},
+            "a8": {"type": "boulder", "climb_type": "Vert"},
+            "b1": {"type": "boulder", "climb_type": "Vert"},
+            "b2": {"type": "boulder", "climb_type": "Slab"},
+            "b3": {"type": "boulder", "climb_type": "Slab"},
+            "b4": {"type": "boulder", "climb_type": "Vert"},
+            "b5": {"type": "boulder", "climb_type": "Overhang"},
+            "b6": {"type": "boulder", "climb_type": "Overhang"},
+            "b7": {"type": "boulder", "climb_type": "Overhang"},
+            "b8": {"type": "boulder", "climb_type": "Vert"},
+            "b9": {"type": "boulder", "climb_type": "Vert"},
+            "b10": {"type": "boulder", "climb_type": "Vert"},
+            "b11": {"type": "boulder", "climb_type": "Vert"},
+            "b12": {"type": "boulder", "climb_type": "Vert"},
+            "c1": {"type": "boulder", "climb_type": "Slab"},
+            "c2": {"type": "boulder", "climb_type": "Slab"},
+            "c3": {"type": "boulder", "climb_type": "Vert"},
+            "c4": {"type": "boulder", "climb_type": "Vert"},
+            "c5": {"type": "boulder", "climb_type": "Overhang"},
+            "c6": {"type": "boulder", "climb_type": "Overhang"},
+            "c7": {"type": "boulder", "climb_type": "Overhang"},
+            "d1": {"type": "boulder", "climb_type": "Vert"},
+            "d2": {"type": "boulder", "climb_type": "Vert"},
+            "d3": {"type": "boulder", "climb_type": "Vert"},
+            "d4": {"type": "boulder", "climb_type": "Vert"},
+            "d5": {"type": "boulder", "climb_type": "Vert"},
+            "d6": {"type": "boulder", "climb_type": "Vert"},
+            "d7": {"type": "boulder", "climb_type": "Vert"},
+            "d8": {"type": "boulder", "climb_type": "Vert"},
+            "d9": {"type": "boulder", "climb_type": "Vert"},
+            "d10": {"type": "boulder", "climb_type": "Vert"},
+            "d11": {"type": "boulder", "climb_type": "Vert"},
+            "d12": {"type": "boulder", "climb_type": "Vert"},
+            "d13": {"type": "boulder", "climb_type": "Vert"},
+            "d14": {"type": "boulder", "climb_type": "Vert"}
+        };
+
+        let csvData = null;
+        let selectedGym = '';
+
+        // Map dropdown codes to actual gym names in Humanity CSV
+        const gymNameMap = {
+            'DSN': 'Design',
+            'PLN': 'Plano',
+            'DTN': 'Denton',
+            'FTW': 'Fort Worth',
+            'GVN': 'Grapevine',
+            'HIL': 'Dallas Hill'  // or just "Hill"?
+        };
+
+        const uploadArea = document.getElementById('upload-area');
+        const csvInput = document.getElementById('csv-input');
+        const gymSelect = document.getElementById('gym-select');
+        const generateBtn = document.getElementById('generate-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const printBtn = document.getElementById('print-btn');
+        const messages = document.getElementById('messages');
+        const preview = document.getElementById('preview');
+
+        // Upload area interactions
+        uploadArea.addEventListener('click', () => csvInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) handleFile(file);
+        });
+
+        csvInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFile(file);
+        });
+
+        gymSelect.addEventListener('change', (e) => {
+            selectedGym = e.target.value;
+            checkReady();
+        });
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.csv')) {
+                showMessage('Please upload a CSV file', 'error');
+                return;
+            }
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    csvData = results.data;
+                    showMessage(`✓ CSV loaded successfully (${csvData.length} rows)`, 'info');
+                    checkReady();
+                },
+                error: (error) => {
+                    showMessage(`Error parsing CSV: ${error.message}`, 'error');
+                }
+            });
+        }
+
+        function checkReady() {
+            if (csvData && selectedGym) {
+                generateBtn.disabled = false;
+            }
+        }
+
+        function showMessage(msg, type) {
+            messages.innerHTML = `<div class="${type}">${msg}</div>`;
+        }
+
+        generateBtn.addEventListener('click', generateSchedule);
+        printBtn.addEventListener('click', () => window.print());
+
+        function parseWalls(titleStr) {
+            if (!titleStr) return [];
+            
+            // Split by common separators and clean up
+            const parts = titleStr.split(/[,\/\s]+/).map(s => s.trim().toLowerCase()).filter(s => s);
+            const walls = [];
+
+            for (const part of parts) {
+                // Try exact match first
+                if (wallsDesign[part]) {
+                    walls.push(part);
+                    continue;
+                }
+
+                // Try fuzzy match
+                for (const [wallName, info] of Object.entries(wallsDesign)) {
+                    if (wallName.includes(part) || part.includes(wallName)) {
+                        walls.push(wallName);
+                        break;
+                    }
+                }
+            }
+
+            return [...new Set(walls)]; // Remove duplicates
+        }
+
+        function getClimbType(walls) {
+            if (walls.length === 0) return '—';
+            
+            const types = walls.map(w => wallsDesign[w]?.climb_type).filter(t => t);
+            if (types.length === 0) return '—';
+
+            // Count occurrences
+            const counts = {};
+            types.forEach(t => counts[t] = (counts[t] || 0) + 1);
+
+            // Return most common
+            return Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+        }
+
+        function getWallType(walls) {
+            if (walls.length === 0) return null;
+            return wallsDesign[walls[0]]?.type;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            return `${month}/${day}`;
+        }
+
+        function generateSchedule() {
+            const scheduleData = [];
+
+            // Debug: Log first row to see column names
+            console.log('First CSV row:', csvData[0]);
+            console.log('Selected gym:', selectedGym);
+            console.log('Total CSV rows:', csvData.length);
+
+            let firstDate = null;
+
+            csvData.forEach((row, index) => {
+                const names = (row['Employee Names'] || '').split('/').map(n => n.trim()).filter(n => n);
+                const date = row['Start Date'];
+                const title = row['Title'];
+                const location = (row['Location'] || '').trim();
+
+                // Skip if missing required fields
+                if (!date || !title) {
+                    console.log(`Row ${index}: Skipped - missing date or title`);
+                    return;
+                }
+                
+                // Match location using gym name mapping
+                const expectedGymName = gymNameMap[selectedGym];
+                if (!location.includes(expectedGymName)) {
+                    console.log(`Row ${index}: Location mismatch - "${location}" doesn't contain "${expectedGymName}"`);
+                    return;
+                }
+
+                console.log(`Row ${index}: MATCHED - Date: ${date}, Title: ${title}, Location: ${location}`);
+
+                // Skip non-setting entries
+                const skipTitles = ['admin', 'personal training', '@hill', '@design', '@plano', '@dtn', '@ftw'];
+                if (skipTitles.some(skip => title.toLowerCase().includes(skip))) {
+                    console.log(`Row ${index}: Skipped - non-setting entry (${title})`);
+                    return;
+                }
+
+                const walls = parseWalls(title);
+                
+                // Skip if no valid walls found
+                if (walls.length === 0) {
+                    console.log(`Row ${index}: Skipped - no valid walls found in "${title}"`);
+                    return;
+                }
+                
+                const climbType = getClimbType(walls);
+                const wallType = getWallType(walls);
+                const setterCount = names.length;
+
+                const dateObj = new Date(date);
+                if (!firstDate) firstDate = dateObj;
+
+                scheduleData.push({
+                    date: dateObj,
+                    dateStr: formatDate(date),
+                    location: walls.join(', '),
+                    climbType,
+                    wallType,
+                    setterCount
+                });
+            });
+
+            // Sort by date
+            scheduleData.sort((a, b) => a.date - b.date);
+
+            // Get date range (should be 2 weeks, Sun-Sat)
+            if (scheduleData.length === 0) {
+                showMessage('No schedule data found for selected gym', 'error');
+                return;
+            }
+
+            const dateRange = `${scheduleData[0].dateStr}-${scheduleData[scheduleData.length - 1].dateStr}`;
+
+            // Find the Sunday that starts this period
+            const startSunday = new Date(scheduleData[0].date);
+            startSunday.setDate(startSunday.getDate() - startSunday.getDay());
+
+            // Store for use in rendering
+            window.scheduleStartSunday = startSunday;
+
+            // Organize by day of week (Sun=0, Mon=1, Tue=2, etc.)
+            // Create 14 slots (2 weeks × 7 days)
+            const scheduleByDay = Array(14).fill(null).map(() => ({ routes: [], boulders: [] }));
+
+            scheduleData.forEach(item => {
+                const daysSinceStart = Math.floor((item.date - startSunday) / (1000 * 60 * 60 * 24));
+                if (daysSinceStart >= 0 && daysSinceStart < 14) {
+                    if (item.wallType === 'rope') {
+                        scheduleByDay[daysSinceStart].routes.push(item);
+                    } else if (item.wallType === 'boulder') {
+                        scheduleByDay[daysSinceStart].boulders.push(item);
+                    }
+                }
+            });
+
+            // Generate HTML
+            let html = '';
+
+            // Check if we have any routes or boulders
+            const hasRoutes = scheduleByDay.some(day => day.routes.length > 0);
+            const hasBoulders = scheduleByDay.some(day => day.boulders.length > 0);
+
+            if (hasRoutes) {
+                html += generatePage('routes (level 1)', scheduleByDay, dateRange, 'routes', startSunday);
+            }
+
+            if (hasBoulders) {
+                html += generatePage('boulders (level 2)', scheduleByDay, dateRange, 'boulders', startSunday);
+            }
+
+            if (html === '') {
+                showMessage('No schedule data found for selected gym', 'error');
+                return;
+            }
+
+            // Instead of showing HTML preview, render to canvas
+            renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders);
+        }
+
+        async function renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders) {
+            preview.innerHTML = '';
+            
+            const canvases = [];
+
+            // Handle different gym layouts
+            if (selectedGym === 'GVN') {
+                // GVN has one combined page with both routes and boulders
+                const canvas = await renderPage('routes', scheduleByDay, dateRange);
+                canvases.push({ canvas, name: `${selectedGym}_schedule.png` });
+            } else if (selectedGym === 'HIL' || selectedGym === 'DTN' || selectedGym === 'FTW') {
+                // Boulder-only gyms
+                if (hasBoulders) {
+                    const canvas = await renderPage('boulders', scheduleByDay, dateRange);
+                    canvases.push({ canvas, name: `${selectedGym}_boulders_schedule.png` });
+                }
+            } else {
+                // DSN and PLN have separate routes/boulders pages
+                if (hasRoutes) {
+                    const canvas = await renderPage('routes', scheduleByDay, dateRange);
+                    canvases.push({ canvas, name: `${selectedGym}_routes_schedule.png` });
+                }
+
+                if (hasBoulders) {
+                    const canvas = await renderPage('boulders', scheduleByDay, dateRange);
+                    canvases.push({ canvas, name: `${selectedGym}_boulders_schedule.png` });
+                }
+            }
+
+            // Display canvases
+            canvases.forEach(({ canvas, name }) => {
+                const container = document.createElement('div');
+                container.style.marginBottom = '20px';
+                canvas.style.maxWidth = '100%';
+                canvas.style.height = 'auto';
+                canvas.style.border = '1px solid #ddd';
+                container.appendChild(canvas);
+                preview.appendChild(container);
+            });
+
+            preview.style.display = 'block';
+            downloadBtn.disabled = false;
+            printBtn.disabled = false;
+
+            // Store canvases for download
+            window.generatedCanvases = canvases;
+
+            showMessage('✓ Schedule generated successfully!', 'info');
+        }
+
+        async function renderPage(type, scheduleByDay, dateRange) {
+            return new Promise((resolve, reject) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 791;
+                canvas.height = 1024;
+                const ctx = canvas.getContext('2d');
+
+                // Determine the correct template file name
+                let templateFile;
+                if (selectedGym === 'GVN') {
+                    // GVN has only one combined page
+                    templateFile = `templates/${selectedGym}_routes.png`;
+                } else if (selectedGym === 'HIL' || selectedGym === 'DTN' || selectedGym === 'FTW') {
+                    // Boulder-only gyms
+                    templateFile = `templates/${selectedGym}_boulders.png`;
+                } else {
+                    // DSN and PLN have separate routes/boulders
+                    templateFile = `templates/${selectedGym}_${type}.png`;
+                }
+
+                // Load background image
+                const img = new Image();
+                img.onload = () => {
+                    // Draw background
+                    ctx.drawImage(img, 0, 0, 791, 1024);
+
+                    // Get coordinates for this gym/type
+                    const gymCoords = templateCoords[selectedGym];
+                    if (!gymCoords) {
+                        console.error(`No coordinates found for ${selectedGym}`);
+                        resolve(canvas);
+                        return;
+                    }
+
+                    // For GVN, use 'routes' coords even if rendering both types
+                    // For boulder-only gyms, use 'boulders' coords
+                    let coords;
+                    if (selectedGym === 'GVN') {
+                        coords = gymCoords['routes'];
+                    } else {
+                        coords = gymCoords[type];
+                    }
+
+                    if (!coords) {
+                        console.error(`No coordinates found for ${selectedGym} ${type}`);
+                        resolve(canvas);
+                        return;
+                    }
+
+                    // Set up text style
+                    ctx.fillStyle = '#1e3a5f';
+                    ctx.font = '14px Montserrat, Arial, sans-serif';
+                    ctx.textBaseline = 'middle';
+
+                    // Render left table (week 1)
+                    const week1 = scheduleByDay.slice(0, 7);
+                    renderTableData(ctx, week1, type, coords.leftTable, coords.tableTop, coords.rowHeight, 0);
+
+                    // Render right table (week 2)
+                    const week2 = scheduleByDay.slice(7, 14);
+                    renderTableData(ctx, week2, type, coords.rightTable, coords.tableTop, coords.rowHeight, 7);
+
+                    resolve(canvas);
+                };
+                img.onerror = reject;
+                img.src = templateFile;
+            });
+        }
+
+        function renderTableData(ctx, weekData, type, tableCoords, tableTop, rowHeight, weekOffset) {
+            const startSunday = window.scheduleStartSunday;
+
+            weekData.forEach((day, rowIndex) => {
+                const y = tableTop + (rowIndex * rowHeight);
+                
+                const currentDate = new Date(startSunday);
+                currentDate.setDate(currentDate.getDate() + weekOffset + rowIndex);
+                const dateStr = formatDate(currentDate);
+
+                const items = day[type] || [];
+
+                if (items.length > 0) {
+                    const locations = items.map(i => i.location).join(', ');
+                    const climbType = items[0].climbType;
+                    const setterCount = Math.max(...items.map(i => i.setterCount));
+
+                    // Draw date
+                    ctx.fillText(dateStr, tableCoords.date.x, y);
+                    
+                    // Draw location (truncate if too long)
+                    const truncatedLocation = truncateText(ctx, locations, tableCoords.location.width);
+                    ctx.fillText(truncatedLocation, tableCoords.location.x, y);
+                    
+                    // Draw climb type
+                    ctx.fillText(climbType, tableCoords.climbType.x, y);
+                    
+                    // Draw setter count
+                    ctx.fillText(String(setterCount), tableCoords.setters.x, y);
+                } else {
+                    // Draw empty row with date
+                    ctx.fillText(dateStr, tableCoords.date.x, y);
+                    ctx.fillText('—', tableCoords.location.x, y);
+                    ctx.fillText('—', tableCoords.climbType.x, y);
+                    ctx.fillText('—', tableCoords.setters.x, y);
+                }
+            });
+        }
+
+        function truncateText(ctx, text, maxWidth) {
+            if (ctx.measureText(text).width <= maxWidth) {
+                return text;
+            }
+            
+            let truncated = text;
+            while (ctx.measureText(truncated + '...').width > maxWidth && truncated.length > 0) {
+                truncated = truncated.slice(0, -1);
+            }
+            return truncated + '...';
+        }
+
+        function downloadImages() {
+            if (!window.generatedCanvases) return;
+
+            window.generatedCanvases.forEach(({ canvas, name }) => {
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = name;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            });
+        }
+
+        function generatePage(sectionTitle, scheduleByDay, dateRange, type, startSunday) {
+            // Split 14 days into two columns (7 days each = 1 week per column)
+            const week1 = scheduleByDay.slice(0, 7);
+            const week2 = scheduleByDay.slice(7, 14);
+
+            // Determine background image path
+            const pageType = type === 'routes' ? 'routes' : 'boulders';
+            const bgImage = `templates/${selectedGym}_${pageType}.png`;
+
+            return `
+                <div class="schedule-page">
+                    <img src="${bgImage}" class="schedule-background" alt="${selectedGym} ${pageType} map" />
+                    
+                    <div class="schedule-content">
+                        <div class="schedule-header">
+                            <div class="logo-section">
+                                <div class="logo"></div>
+                                <div class="brand">movement<br><span style="font-size: 11px; font-weight: 400;">CLIMBING • YOGA • FITNESS</span></div>
+                            </div>
+                            <div class="schedule-title">
+                                <h2>setting schedule</h2>
+                                <div class="date-range">${dateRange}</div>
+                            </div>
+                        </div>
+
+                        <div class="section-title">› ${sectionTitle}</div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            ${generateTable(week1, type, startSunday, 0)}
+                            ${generateTable(week2, type, startSunday, 7)}
+                        </div>
+
+                        <div class="footer-note">
+                            This map reflects the general plan for what areas of the gym will be reset throughout each week.<br>
+                            Daily setting operations are subject to change based on unforeseen impacts and immediate needs in the gym.
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateTable(weekData, type, startSunday, weekOffset) {
+            let rows = '';
+            
+            weekData.forEach((day, dayIndex) => {
+                const currentDate = new Date(startSunday);
+                currentDate.setDate(currentDate.getDate() + weekOffset + dayIndex);
+                const dateStr = formatDate(currentDate);
+
+                const items = day[type] || [];
+                
+                if (items.length > 0) {
+                    // Combine all items for this day
+                    const locations = items.map(i => i.location).join(', ');
+                    const climbType = items[0].climbType; // Use first item's climb type
+                    const setterCount = Math.max(...items.map(i => i.setterCount)); // Max setters
+                    
+                    rows += `
+                        <tr>
+                            <td>${dateStr}</td>
+                            <td>${locations}</td>
+                            <td>${climbType}</td>
+                            <td>${setterCount}</td>
+                        </tr>
+                    `;
+                } else {
+                    rows += `
+                        <tr>
+                            <td>${dateStr}</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            return `
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>LOCATION</th>
+                            <th>CLIMB TYPE</th>
+                            <th># OF SETTERS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            `;
+        }
+    </script>
+</body>
+</html>
