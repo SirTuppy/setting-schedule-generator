@@ -788,20 +788,13 @@
             const hasRoutes = scheduleByDay.some(day => day.routes.length > 0);
             const hasBoulders = scheduleByDay.some(day => day.boulders.length > 0);
 
-            if (hasRoutes) {
-                html += generatePage('routes (level 1)', scheduleByDay, dateRange, 'routes', startSunday);
-            }
-
-            if (hasBoulders) {
-                html += generatePage('boulders (level 2)', scheduleByDay, dateRange, 'boulders', startSunday);
-            }
-
-            if (html === '') {
+            // If there's no data to show, display an error and stop.
+            if (!hasRoutes && !hasBoulders) {
                 showMessage('No schedule data found for selected gym', 'error');
                 return;
             }
 
-            // Instead of showing HTML preview, render to canvas
+            // Render the data to the canvas
             renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders);
         }
 
@@ -988,100 +981,6 @@
                     URL.revokeObjectURL(url);
                 });
             });
-        }
-        
-        function generatePage(sectionTitle, scheduleByDay, dateRange, type, startSunday) {
-            // Split 14 days into two columns (7 days each = 1 week per column)
-            const week1 = scheduleByDay.slice(0, 7);
-            const week2 = scheduleByDay.slice(7, 14);
-
-            // Determine background image path
-            const pageType = type === 'routes' ? 'routes' : 'boulders';
-            const bgImage = `templates/${selectedGym}_${pageType}.png`;
-
-            return `
-                <div class="schedule-page">
-                    <img src="${bgImage}" class="schedule-background" alt="${selectedGym} ${pageType} map" />
-                    
-                    <div class="schedule-content">
-                        <div class="schedule-header">
-                            <div class="logo-section">
-                                <div class="logo"></div>
-                                <div class="brand">movement<br><span style="font-size: 11px; font-weight: 400;">CLIMBING â€¢ YOGA â€¢ FITNESS</span></div>
-                            </div>
-                            <div class="schedule-title">
-                                <h2>setting schedule</h2>
-                                <div class="date-range">${dateRange}</div>
-                            </div>
-                        </div>
-
-                        <div class="section-title">â€º ${sectionTitle}</div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            ${generateTable(week1, type, startSunday, 0)}
-                            ${generateTable(week2, type, startSunday, 7)}
-                        </div>
-
-                        <div class="footer-note">
-                            This map reflects the general plan for what areas of the gym will be reset throughout each week.<br>
-                            Daily setting operations are subject to change based on unforeseen impacts and immediate needs in the gym.
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function generateTable(weekData, type, startSunday, weekOffset) {
-            let rows = '';
-            
-            weekData.forEach((day, dayIndex) => {
-                const currentDate = new Date(startSunday);
-                currentDate.setDate(currentDate.getDate() + weekOffset + dayIndex);
-                const dateStr = formatDate(currentDate);
-
-                const items = day[type] || [];
-                
-                if (items.length > 0) {
-                    // Combine all items for this day
-                    const locations = items.map(i => i.location).join(', ');
-                    const climbType = items[0].climbType; // Use first item's climb type
-                    const setterCount = Math.max(...items.map(i => i.setterCount)); // Max setters
-                    
-                    rows += `
-                        <tr>
-                            <td>${dateStr}</td>
-                            <td>${locations}</td>
-                            <td>${climbType}</td>
-                            <td>${setterCount}</td>
-                        </tr>
-                    `;
-                } else {
-                    rows += `
-                        <tr>
-                            <td>${dateStr}</td>
-                            <td>â€”</td>
-                            <td>â€”</td>
-                            <td>â€”</td>
-                        </tr>
-                    `;
-                }
-            });
-
-            return `
-                <table class="schedule-table">
-                    <thead>
-                        <tr>
-                            <th>DATE</th>
-                            <th>LOCATION</th>
-                            <th>CLIMB TYPE</th>
-                            <th># OF SETTERS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${rows}
-                    </tbody>
-                </table>
-            `;
         }
     </script>
 </body>
