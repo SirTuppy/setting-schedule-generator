@@ -54,7 +54,7 @@ const gymWalls = {
         "speed wall": {"type": "rope", "climb_type": "Vert"},
         "steep left": {"type": "rope", "climb_type": "Vert"},
         "steep right": {"type": "rope", "climb_type": "Vert"},
-        "the slab": {"type": "rope", "climb_type": "Vert"}, // Also at GVN
+        "the slab": {"type": "rope", "climb_type": "Slab"}, // Also at GVN
         "b1": {"type": "boulder", "climb_type": "Slab"},
         "b2": {"type": "boulder", "climb_type": "Slab"},
         "b3": {"type": "boulder", "climb_type": "Vert"},
@@ -109,6 +109,65 @@ const gymWalls = {
         "b10-aaa": {"type": "boulder", "climb_type": "Vert"}, "aaa": {"type": "boulder", "climb_type": "Vert"},
         "b11-aab": {"type": "boulder", "climb_type": "Vert"}, "b12-aab": {"type": "boulder", "climb_type": "Vert"}, "aab": {"type": "boulder", "climb_type": "Vert"}
     },
-    'HIL': {}, // Add Hill walls here
-    'FTW': {}  // Add Fort Worth walls here
+    'HIL': 
+	{
+		"a1": {"type": "boulder", "climb_type": "Vert"},
+		"a2": {"type": "boulder", "climb_type": "Vert"},
+		"a3": {"type": "boulder", "climb_type": "Vert"},
+		"a4": {"type": "boulder", "climb_type": "Vert"},
+		"a5": {"type": "boulder", "climb_type": "Vert"},
+		"a6": {"type": "boulder", "climb_type": "Vert"},
+		"a7": {"type": "boulder", "climb_type": "Vert"},
+		"a8": {"type": "boulder", "climb_type": "Vert"},
+		"b1": {"type": "boulder", "climb_type": "Vert"},
+		"b2": {"type": "boulder", "climb_type": "Vert"},
+		"b3": {"type": "boulder", "climb_type": "Vert"},
+		"b4": {"type": "boulder", "climb_type": "Vert"},
+		"b5": {"type": "boulder", "climb_type": "Vert"},
+		"b6": {"type": "boulder", "climb_type": "Vert"},
+		"b7": {"type": "boulder", "climb_type": "Vert"},
+		"b8": {"type": "boulder", "climb_type": "Vert"},
+		"b9": {"type": "boulder", "climb_type": "Vert"},
+		"b10": {"type": "boulder", "climb_type": "Vert"},
+		"c1": {"type": "boulder", "climb_type": "Vert"},
+		"c2": {"type": "boulder", "climb_type": "Vert"},
+		"c3": {"type": "boulder", "climb_type": "Vert"},
+		"c4": {"type": "boulder", "climb_type": "Vert"},
+		"d1": {"type": "boulder", "climb_type": "Vert"},
+		"d2": {"type": "boulder", "climb_type": "Vert"},
+		"d3": {"type": "boulder", "climb_type": "Vert"},
+		"d4": {"type": "boulder", "climb_type": "Vert"},
+		"d5": {"type": "boulder", "climb_type": "Vert"},
+		"d6": {"type": "boulder", "climb_type": "Vert"},
+		"d7": {"type": "boulder", "climb_type": "Vert"},
+		"d8": {"type": "boulder", "climb_type": "Vert"},
+		"d9": {"type": "boulder", "climb_type": "Vert"},
+		"d10": {"type": "boulder", "climb_type": "Vert"},
+		"d11": {"type": "boulder", "climb_type": "Vert"},
+		"d12": {"type": "boulder", "climb_type": "Vert"},
+		"d13": {"type": "boulder", "climb_type": "Vert"},
+		"d14": {"type": "boulder", "climb_type": "Vert"}
+	}
+    'FTW': {
+		"a1": {"type": "boulder", "climb_type": "Vert"},
+		"a2": {"type": "boulder", "climb_type": "Vert"},
+		"a3": {"type": "boulder", "climb_type": "Vert"},
+		"a4": {"type": "boulder", "climb_type": "Vert"},
+		"a5": {"type": "boulder", "climb_type": "Vert"},
+		"a6": {"type": "boulder", "climb_type": "Vert"},
+		"a7": {"type": "boulder", "climb_type": "Vert"},
+		"a8": {"type": "boulder", "climb_type": "Vert"},
+		"b1": {"type": "boulder", "climb_type": "Vert"},
+		"b2": {"type": "boulder", "climb_type": "Vert"},
+		"b3": {"type": "boulder", "climb_type": "Vert"},
+		"b4": {"type": "boulder", "climb_type": "Vert"},
+		"b5": {"type": "boulder", "climb_type": "Vert"},
+		"b6": {"type": "boulder", "climb_type": "Vert"},
+		"b7": {"type": "boulder", "climb_type": "Vert"},
+		"b8": {"type": "boulder", "climb_type": "Vert"},
+		"b9": {"type": "boulder", "climb_type": "Vert"},
+		"b10": {"type": "boulder", "climb_type": "Vert"},
+		"b11": {"type": "boulder", "climb_type": "Vert"},
+		"b12": {"type": "boulder", "climb_type": "Vert"}
+	}
 };
