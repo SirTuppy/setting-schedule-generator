@@ -413,6 +413,32 @@
         .buttons button span {
             vertical-align: middle;
         }
+        /* --- STYLES FOR SETTINGS MODAL --- */
+        .settings-form {
+            margin-top: 20px;
+            display: grid;
+            gap: 15px;
+        }
+        .settings-form .control-group {
+            margin: 0;
+        }
+        .settings-form textarea, .settings-form input {
+            width: 100%;
+            font-size: 14px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .template-hint {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .modal-buttons {
+            margin-top: 25px;
+            display: flex;
+            justify-content: flex-end;
+        }
     </style>
 </head>
 <body>
@@ -460,6 +486,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                     <span>Print / Save PDF</span>
                 </button>
+                <button class="btn-secondary" id="email-btn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <span>Email Schedule</span>
+                </button>
             </div>
 
             <!-- Utility Actions Group -->
@@ -478,6 +508,10 @@
                     <!-- Help SVG Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     <span>Instructions</span>
+                </button>
+                <button class="btn-utility" id="settings-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>Email Settings</span>
                 </button>
             </div>
         </div>
@@ -509,13 +543,14 @@
                 'HIL': 'Dallas Hill'
             };
 
-            // DOM Element References
+            // --- MODIFIED: Add all new DOM element references ---
             const uploadArea = document.getElementById('upload-area');
             const csvInput = document.getElementById('csv-input');
             const gymSelect = document.getElementById('gym-select');
             const generateBtn = document.getElementById('generate-btn');
             const downloadBtn = document.getElementById('download-btn');
             const printBtn = document.getElementById('print-btn');
+            const emailBtn = document.getElementById('email-btn'); // New
             const messages = document.getElementById('messages');
             const preview = document.getElementById('preview');
             const helpBtn = document.getElementById('help-btn');
@@ -523,6 +558,16 @@
             const modalCloseBtn = document.getElementById('modal-close-btn');
             const saveBtn = document.getElementById('save-btn');
             const loadBtn = document.getElementById('load-btn');
+            const settingsBtn = document.getElementById('settings-btn'); // New
+
+            // New Settings Modal elements
+            const settingsModalOverlay = document.getElementById('settings-modal-overlay');
+            const settingsModalCloseBtn = document.getElementById('settings-modal-close-btn');
+            const saveSettingsBtn = document.getElementById('save-settings-btn');
+            const emailToInput = document.getElementById('email-to-input');
+            const emailCcInput = document.getElementById('email-cc-input');
+            const emailSubjectInput = document.getElementById('email-subject-input');
+            const emailBodyInput = document.getElementById('email-body-input');
 
             // Event Listeners
             uploadArea.addEventListener('click', () => csvInput.click());
@@ -553,6 +598,14 @@
             });
             saveBtn.addEventListener('click', saveLatestSchedule);
             loadBtn.addEventListener('click', loadLatestSchedule);
+            emailBtn.addEventListener('click', generateAndOpenEmail);
+            settingsBtn.addEventListener('click', () => { settingsModalOverlay.style.display = 'block'; });
+            settingsModalCloseBtn.addEventListener('click', () => { settingsModalOverlay.style.display = 'none'; });
+            window.addEventListener('click', (event) => {
+                if (event.target == modalOverlay) modalOverlay.style.display = 'none';
+                if (event.target == settingsModalOverlay) settingsModalOverlay.style.display = 'none'; // New
+            });
+            saveSettingsBtn.addEventListener('click', saveEmailSettings);
 
             function handleFile(file) {
                 if (!file.name.endsWith('.csv')) {
@@ -583,6 +636,7 @@
                 appState.selectedGym = gymSelect.value;
                 checkReady();
                 updateLoadButtonState();
+                loadEmailSettings();
             }
 
             function getWallType(walls, gym) {
@@ -1031,6 +1085,56 @@
                 return expandedStr;
             }
 
+            // --- NEW: Function to generate and open the pre-filled email draft ---
+            function generateAndOpenEmail() {
+                if (appState.scheduleByDay.length === 0) {
+                    showMessage('Please generate a schedule before emailing.', 'error');
+                    return;
+                }
+
+                // 1. Get saved templates, with sensible defaults
+                const to = localStorage.getItem('emailConfig_to') || '';
+                const cc = localStorage.getItem('emailConfig_cc') || '';
+                const subjectTemplate = localStorage.getItem('emailConfig_subject') || '[GYM_NAME] Setting Schedule: [DATE_RANGE]';
+                const bodyTemplate = localStorage.getItem('emailConfig_body') || `Hi Team,\n\nPlease find the setting schedule for [GYM_NAME] for the weeks of [DATE_RANGE].\n\n(Please remember to attach the schedule image to this email before sending.)\n\nThanks!`;
+
+                // 2. Replace placeholders with actual data
+                const gymFullName = gymNameMap[appState.selectedGym] || appState.selectedGym;
+                const subject = subjectTemplate
+                    .replace('[GYM_NAME]', gymFullName)
+                    .replace('[DATE_RANGE]', appState.dateRange);
+                const body = bodyTemplate
+                    .replace('[GYM_NAME]', gymFullName)
+                    .replace('[DATE_RANGE]', appState.dateRange);
+
+                // 3. Construct the mailto link, ensuring components are URL-encoded
+                let mailtoLink = `mailto:${encodeURIComponent(to)}`;
+                mailtoLink += `?subject=${encodeURIComponent(subject)}`;
+                if (cc) mailtoLink += `&cc=${encodeURIComponent(cc)}`;
+                mailtoLink += `&body=${encodeURIComponent(body)}`;
+
+                // 4. Trigger the user's email client
+                window.location.href = mailtoLink;
+            }
+
+            // --- NEW: Functions to save and load email settings from localStorage ---
+            function saveEmailSettings() {
+                localStorage.setItem('emailConfig_to', emailToInput.value);
+                localStorage.setItem('emailConfig_cc', emailCcInput.value);
+                localStorage.setItem('emailConfig_subject', emailSubjectInput.value);
+                localStorage.setItem('emailConfig_body', emailBodyInput.value);
+
+                showMessage('Email settings saved successfully!', 'info');
+                settingsModalOverlay.style.display = 'none';
+            }
+
+            function loadEmailSettings() {
+                emailToInput.value = localStorage.getItem('emailConfig_to') || 'marketing@example.com, director@example.com';
+                emailCcInput.value = localStorage.getItem('emailConfig_cc') || '';
+                emailSubjectInput.value = localStorage.getItem('emailConfig_subject') || '[GYM_NAME] Setting Schedule: [DATE_RANGE]';
+                emailBodyInput.value = localStorage.getItem('emailConfig_body') || `Hi Team,\n\nPlease find the setting schedule for [GYM_NAME] for the weeks of [DATE_RANGE].\n\n(Please remember to attach the schedule image to this email before sending.)\n\nThanks!`;
+            }
+
             function parseWalls(titleStr, gym) {
                 if (!titleStr || !gymWalls[gym]) return [];
                 const currentGymWalls = gymWalls[gym];
@@ -1123,6 +1227,9 @@
                 <li>
                     <strong>Download or Print:</strong> Once you are happy with the schedule, use the "Download Image" or "Print / Save PDF" buttons to export your final copy.
                 </li>
+                <li>
+                    <strong>Emailing</strong> Optionally, you can use the Email Settings to configure an email for you. All you have to do is define what you want in setting and click Email Schedule, and your email app will open. <strong>Be sure to upload the new schedule you made!</strong>
+                </li>
             </ol>
 
             <h4 style="margin-top: 30px;">Quick Edits (Saving & Loading)</h4>
@@ -1135,6 +1242,41 @@
             <p style="font-size: 12px; color: #666; margin-top: 20px;">
                 <strong>Note:</strong> Saved schedules are stored in your web browser's local storage, not in the cloud. They are only accessible on the same computer and browser you used to save them.
             </p>
+        </div>
+    </div>
+    <!-- ======================= -->
+    <!--     SETTINGS MODAL        -->
+    <!-- ======================= -->
+    <div id="settings-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <span id="settings-modal-close-btn" class="modal-close">&times;</span>
+            <h2>Email Settings</h2>
+            <p>Configure the default email template. These settings will be saved in your browser.</p>
+
+            <div class="settings-form">
+                <div class="control-group">
+                    <label for="email-to-input">To (separate emails with a comma)</label>
+                    <textarea id="email-to-input" rows="2"></textarea>
+                </div>
+                <div class="control-group">
+                    <label for="email-cc-input">CC (separate emails with a comma)</label>
+                    <textarea id="email-cc-input" rows="2"></textarea>
+                </div>
+                <div class="control-group">
+                    <label for="email-subject-input">Subject Template</label>
+                    <input type="text" id="email-subject-input">
+                    <small class="template-hint">Use <strong>[GYM_NAME]</strong> and <strong>[DATE_RANGE]</strong> as placeholders.</small>
+                </div>
+                <div class="control-group">
+                    <label for="email-body-input">Body Template</label>
+                    <textarea id="email-body-input" rows="6"></textarea>
+                    <small class="template-hint">Use <strong>[GYM_NAME]</strong> and <strong>[DATE_RANGE]</strong>. The user must manually attach the schedule image.</small>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn-primary" id="save-settings-btn">Save Settings</button>
+            </div>
         </div>
     </div>
 </body>
