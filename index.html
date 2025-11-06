@@ -405,51 +405,78 @@
 
         generateBtn.addEventListener('click', generateSchedule);
         printBtn.addEventListener('click', () => window.print());
+		
+		function initializeState() {
+			selectedGym = gymSelect.value;
+			checkReady();
+		}
+		initializeState();
+		
+		function expandWallRanges(titleStr) {
+			// Regex to find all patterns like "B1-2", "C3-5", etc.
+			const rangeRegex = /([a-zA-Z]+)(\d+)-(\d+)/g;
+    
+			return titleStr.replace(rangeRegex, (match, prefix, startStr, endStr) => {
+				const start = parseInt(startStr);
+				const end = parseInt(endStr);
+				const expanded = [];
+				for (let i = start; i <= end; i++) {
+					expanded.push(prefix + i);
+				}
+				return expanded.join(', '); // Turns "B1-2" into "B1, B2"
+			});
+		}
 
-        function parseWalls(titleStr) {
-            if (!titleStr) return [];
-            
-            // Split by common separators and clean up
-            const parts = titleStr.split(/[,\/\s]+/).map(s => s.trim().toLowerCase()).filter(s => s);
-            const walls = [];
+        function parseWalls(titleStr, gym) {
+			if (!titleStr || !gymWalls[gym]) return [];
 
-            for (const part of parts) {
-                // Try exact match first
-                if (wallsDesign[part]) {
-                    walls.push(part);
-                    continue;
-                }
+			const currentGymWalls = gymWalls[gym];
+			const expandedTitle = expandWallRanges(titleStr);
+    
+			let cleanTitle = expandedTitle.toLowerCase().replace('jcca - ', '');
+			
+			const parts = cleanTitle.replace(/\./g, '').split(/[,\/\s+]+/g).filter(s => s);
+			const walls = [];
+			let buffer = [];
 
-                // Try fuzzy match
-                for (const [wallName, info] of Object.entries(wallsDesign)) {
-                    if (wallName.includes(part) || part.includes(wallName)) {
-                        walls.push(wallName);
-                        break;
-                    }
-                }
-            }
+			for (const part of parts) {
+				buffer.push(part);
+				const potentialWall = buffer.join(' ');
 
-            return [...new Set(walls)]; // Remove duplicates
-        }
+				if (currentGymWalls[potentialWall]) {
+					walls.push(potentialWall);
+					buffer = [];
+					continue;
+				}
+			}
+    
+			for(const part of buffer){
+				if(currentGymWalls[part]){
+					walls.push(part);
+				}
+			}
 
-        function getClimbType(walls) {
-            if (walls.length === 0) return '-';
-            
-            const types = walls.map(w => wallsDesign[w]?.climb_type).filter(t => t);
-            if (types.length === 0) return '-';
+			return [...new Set(walls)];
+		}
 
-            // Count occurrences
-            const counts = {};
-            types.forEach(t => counts[t] = (counts[t] || 0) + 1);
+        function getClimbType(walls, gym) {
+			if (walls.length === 0 || !gymWalls[gym]) return '-';
+    
+			const types = walls.map(w => gymWalls[gym][w]?.climb_type).filter(t => t);
+			if (types.length === 0) return '-';
 
-            // Return most common
-            return Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
-        }
+			// Count occurrences
+			const counts = {};
+			types.forEach(t => counts[t] = (counts[t] || 0) + 1);
 
-        function getWallType(walls) {
-            if (walls.length === 0) return null;
-            return wallsDesign[walls[0]]?.type;
-        }
+			// Return most common
+			return Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+		}
+
+        function getWallType(walls, gym) {
+			if (walls.length === 0 || !gymWalls[gym]) return null;
+			return gymWalls[gym][walls[0]]?.type;
+		}
 
         function formatDate(dateStr) {
             const date = new Date(dateStr);
@@ -459,167 +486,211 @@
         }
 
         function generateSchedule() {
-            const scheduleData = [];
+			// --- START: NEW GYM DETECTION LOGIC ---
 
-            // Debug: Log first row to see column names
-            console.log('First CSV row:', csvData[0]);
-            console.log('Selected gym:', selectedGym);
-            console.log('Total CSV rows:', csvData.length);
+			// 1. Pre-scan the CSV to detect the most likely gym.
+			const gymCounts = {};
+			const gymCodes = Object.keys(gymNameMap); // ['DSN', 'PLN', ...]
 
-            let firstDate = null;
+			csvData.forEach(row => {
+				const location = (row['Location'] || '').trim();
+				if (location) {
+					for (const code of gymCodes) {
+						if (location.includes(gymNameMap[code])) {
+							gymCounts[code] = (gymCounts[code] || 0) + 1;
+							break; // Stop after finding the first match for this row
+						}
+					}
+				}
+			});
 
-            csvData.forEach((row, index) => {
-                const names = (row['Employee Names'] || '').split('/').map(n => n.trim()).filter(n => n);
-                const date = row['Start Date'];
-                const title = row['Title'];
-                const location = (row['Location'] || '').trim();
+			// 2. Determine the detected gym (the one with the most mentions).
+			let detectedGym = null;
+			if (Object.keys(gymCounts).length > 0) {
+				detectedGym = Object.keys(gymCounts).sort((a, b) => gymCounts[b] - gymCounts[a])[0];
+			}
 
-                // Skip if missing required fields
-                if (!date || !title) {
-                    console.log(`Row ${index}: Skipped - missing date or title`);
-                    return;
-                }
-                
-                // Match location using gym name mapping
-                const expectedGymName = gymNameMap[selectedGym];
-                if (!location.includes(expectedGymName)) {
-                    console.log(`Row ${index}: Location mismatch - "${location}" doesn't contain "${expectedGymName}"`);
-                    return;
-                }
+			// 3. If a gym was detected and it doesn't match the user's selection, prompt them.
+			if (detectedGym && detectedGym !== selectedGym) {
+				const selectedGymFullName = gymNameMap[selectedGym] || selectedGym;
+				const detectedGymFullName = gymNameMap[detectedGym] || detectedGym;
+				
+				const message = `${selectedGymFullName} was selected, but the CSV data appears to be for ${detectedGymFullName}.\n\nWould you like to switch to ${detectedGymFullName} and generate the schedule?`;
 
-                console.log(`Row ${index}: MATCHED - Date: ${date}, Title: ${title}, Location: ${location}`);
+				if (confirm(message)) {
+					// If user clicks "OK", switch the gym and re-run.
+					gymSelect.value = detectedGym;
+					selectedGym = detectedGym;
+					generateSchedule(); // Re-run the function with the correct gym
+					return; // Stop the current execution
+				} else {
+					// If user clicks "Cancel", just stop.
+					return;
+				}
+			}
+			
+			// --- END: NEW GYM DETECTION LOGIC ---
 
-                // Skip non-setting entries
-                const skipTitles = ['admin', 'personal training', '@hill', '@design', '@plano', '@dtn', '@ftw'];
-                if (skipTitles.some(skip => title.toLowerCase().includes(skip))) {
-                    console.log(`Row ${index}: Skipped - non-setting entry (${title})`);
-                    return;
-                }
 
-                const walls = parseWalls(title);
-                
-                // Skip if no valid walls found
-                if (walls.length === 0) {
-                    console.log(`Row ${index}: Skipped - no valid walls found in "${title}"`);
-                    return;
-                }
-                
-                const climbType = getClimbType(walls);
-                const wallType = getWallType(walls);
-                const setterCount = names.length;
+			// --- Core data processing logic (remains the same) ---
+			const scheduleByDate = {};
 
-                const dateObj = new Date(date);
-                if (!firstDate) firstDate = dateObj;
+			csvData.forEach((row, index) => {
+				const date = row['Start Date'];
+				const title = row['Title'];
+				const location = (row['Location'] || '').trim();
 
-                scheduleData.push({
-                    date: dateObj,
-                    dateStr: formatDate(date),
-                    location: walls.join(', '),
-                    climbType,
-                    wallType,
-                    setterCount
-                });
-            });
+				// This check is now a fallback, as we've already mostly verified the gym.
+				if (!date || !title || !location.includes(gymNameMap[selectedGym])) {
+					return;
+				}
 
-            // Sort by date
-            scheduleData.sort((a, b) => a.date - b.date);
+				const skipTitles = ['admin', 'personal training', 'washing', 'forerunning', 'climb time', '@hill', '@design', '@plano', '@dtn', '@ftw'];
+				if (skipTitles.some(skip => title.toLowerCase().includes(skip))) {
+					return;
+				}
 
-            // Get date range (should be 2 weeks, Sun-Sat)
-            if (scheduleData.length === 0) {
-                showMessage('No schedule data found for selected gym', 'error');
-                return;
-            }
+				const walls = parseWalls(title, selectedGym);
+				if (walls.length === 0) {
+					console.log(`Row ${index}: Skipped - no valid walls found in "${title}" for gym ${selectedGym}`);
+					return;
+				}
+				
+				const names = (row['Employee Names'] || '').split('/').map(n => n.trim()).filter(n => n);
+				const setterCount = names.length;
 
-            const dateRange = `${scheduleData[0].dateStr}-${scheduleData[scheduleData.length - 1].dateStr}`;
+				if (!scheduleByDate[date]) {
+					scheduleByDate[date] = { date: new Date(date), walls: [], setterCount: 0 };
+				}
 
-            // Find the Sunday that starts this period
-            const startSunday = new Date(scheduleData[0].date);
-            startSunday.setDate(startSunday.getDate() - startSunday.getDay());
+				scheduleByDate[date].walls.push(...walls);
+				scheduleByDate[date].setterCount += setterCount;
+			});
 
-            // Store for use in rendering
-            window.scheduleStartSunday = startSunday;
+			const scheduleData = Object.values(scheduleByDate).map(day => {
+				const uniqueWalls = [...new Set(day.walls)];
+				return {
+					date: day.date,
+					dateStr: formatDate(day.date),
+					location: uniqueWalls.join(', '),
+					climbType: getClimbType(uniqueWalls, selectedGym),
+					setterCount: day.setterCount
+				};
+			});
 
-            // Organize by day of week (Sun=0, Mon=1, Tue=2, etc.)
-            // Create 14 slots (2 weeks Ã— 7 days)
-            const scheduleByDay = Array(14).fill(null).map(() => ({ routes: [], boulders: [] }));
+			scheduleData.sort((a, b) => a.date - b.date);
 
-            scheduleData.forEach(item => {
-                const daysSinceStart = Math.floor((item.date - startSunday) / (1000 * 60 * 60 * 24));
-                if (daysSinceStart >= 0 && daysSinceStart < 14) {
-                    if (item.wallType === 'rope') {
-                        scheduleByDay[daysSinceStart].routes.push(item);
-                    } else if (item.wallType === 'boulder') {
-                        scheduleByDay[daysSinceStart].boulders.push(item);
-                    }
-                }
-            });
+			if (scheduleData.length === 0) {
+				// This message will now only show if the CSV is for the right gym but has no valid setting entries.
+				showMessage('No valid setting schedule data found for the selected gym in this CSV.', 'error');
+				return;
+			}
 
-            // Generate HTML
-            let html = '';
+			// ... the rest of the function continues as before ...
+			const startSunday = new Date(scheduleData[0].date);
+			startSunday.setDate(startSunday.getDate() - startSunday.getDay());
 
-            // Check if we have any routes or boulders
-            const hasRoutes = scheduleByDay.some(day => day.routes.length > 0);
-            const hasBoulders = scheduleByDay.some(day => day.boulders.length > 0);
+			const endSaturday = new Date(startSunday);
+			endSaturday.setDate(endSaturday.getDate() + 13);
 
-            // If there's no data to show, display an error and stop.
-            if (!hasRoutes && !hasBoulders) {
-                showMessage('No schedule data found for selected gym', 'error');
-                return;
-            }
+			const dateRange = `${formatDate(startSunday)}-${formatDate(endSaturday)}`;
+			window.scheduleStartSunday = startSunday;
 
-            // Render the data to the canvas
-            renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders);
-        }
+			const scheduleByDay = Array(14).fill(null).map(() => ({ routes: [], boulders: [] }));
+			scheduleData.forEach(item => {
+				const daysSinceStart = Math.floor((item.date - startSunday) / (1000 * 60 * 60 * 24));
+				if (daysSinceStart >= 0 && daysSinceStart < 14) {
+					 const dayData = { ...item };
+					 const walls = parseWalls(item.location, selectedGym);
+
+					 const ropeWalls = walls.filter(w => gymWalls[selectedGym][w]?.type === 'rope');
+					 const boulderWalls = walls.filter(w => gymWalls[selectedGym][w]?.type === 'boulder');
+
+					 if(ropeWalls.length > 0){
+						 scheduleByDay[daysSinceStart].routes.push({
+							 ...dayData,
+							 location: ropeWalls.join(', '),
+							 climbType: getClimbType(ropeWalls, selectedGym)
+						 });
+					 }
+					 if(boulderWalls.length > 0){
+						 scheduleByDay[daysSinceStart].boulders.push({
+							 ...dayData,
+							 location: boulderWalls.join(', '),
+							 climbType: getClimbType(boulderWalls, selectedGym)
+						 });
+					 }
+				}
+			});
+
+			const hasRoutes = scheduleByDay.some(day => day.routes.length > 0);
+			const hasBoulders = scheduleByDay.some(day => day.boulders.length > 0);
+
+			if (!hasRoutes && !hasBoulders) {
+				showMessage('No schedule data found for selected gym', 'error');
+				return;
+			}
+
+			renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders);
+		}
 
         async function renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders) {
-            preview.innerHTML = '';
-            
-            const canvases = [];
+			preview.innerHTML = '';
+			const canvases = [];
 
-            // Handle different gym layouts
-            if (selectedGym === 'GVN') {
-                // GVN has one combined page with both routes and boulders
-                const canvas = await renderPage('routes', scheduleByDay, dateRange);
-                canvases.push({ canvas, name: `${selectedGym}_schedule.png` });
-            } else if (selectedGym === 'HIL' || selectedGym === 'DTN' || selectedGym === 'FTW') {
-                // Boulder-only gyms
-                if (hasBoulders) {
-                    const canvas = await renderPage('boulders', scheduleByDay, dateRange);
-                    canvases.push({ canvas, name: `${selectedGym}_boulders_schedule.png` });
-                }
-            } else {
-                // DSN and PLN have separate routes/boulders pages
-                if (hasRoutes) {
-                    const canvas = await renderPage('routes', scheduleByDay, dateRange);
-                    canvases.push({ canvas, name: `${selectedGym}_routes_schedule.png` });
-                }
+			// --- START: NEW, SMARTER ROUTER LOGIC ---
 
-                if (hasBoulders) {
-                    const canvas = await renderPage('boulders', scheduleByDay, dateRange);
-                    canvases.push({ canvas, name: `${selectedGym}_boulders_schedule.png` });
-                }
-            }
+			// Case 1: Handle Combined Gyms (GVN, PLN)
+			if (selectedGym === 'GVN' || selectedGym === 'PLN') {
+				// These gyms have one combined page. Render it if there is ANY data.
+				if (hasRoutes || hasBoulders) {
+					// We pass 'routes' as a placeholder type; the renderPage function knows to
+					// look for the 'combined' coordinates for these gyms.
+					const canvas = await renderPage('routes', scheduleByDay, dateRange);
+					canvases.push({ canvas, name: `${selectedGym}_schedule.png` });
+				}
+			}
+			
+			// Case 2: Handle Boulders-Only Gyms (HIL, DTN, FTW)
+			else if (selectedGym === 'HIL' || selectedGym === 'DTN' || selectedGym === 'FTW') {
+				// These gyms have one page, and only if there is boulder data.
+				if (hasBoulders) {
+					const canvas = await renderPage('boulders', scheduleByDay, dateRange);
+					canvases.push({ canvas, name: `${selectedGym}_boulders_schedule.png` });
+				}
+			}
+			
+			// Case 3: Handle Split-Page Gyms (DSN)
+			else {
+				// This is the default behavior for gyms with separate pages.
+				if (hasRoutes) {
+					const canvas = await renderPage('routes', scheduleByDay, dateRange);
+					canvases.push({ canvas, name: `${selectedGym}_routes_schedule.png` });
+				}
+				if (hasBoulders) {
+					const canvas = await renderPage('boulders', scheduleByDay, dateRange);
+					canvases.push({ canvas, name: `${selectedGym}_boulders_schedule.png` });
+				}
+			}
 
-            // Display canvases
-            canvases.forEach(({ canvas, name }) => {
-                const container = document.createElement('div');
-                container.style.marginBottom = '20px';
-                canvas.style.maxWidth = '100%';
-                canvas.style.height = 'auto';
-                canvas.style.border = '1px solid #ddd';
-                container.appendChild(canvas);
-                preview.appendChild(container);
-            });
+			// Display canvases (this part remains the same)
+			canvases.forEach(({ canvas, name }) => {
+				const container = document.createElement('div');
+				container.style.marginBottom = '20px';
+				canvas.style.maxWidth = '100%';
+				canvas.style.height = 'auto';
+				canvas.style.border = '1px solid #ddd';
+				container.appendChild(canvas);
+				preview.appendChild(container);
+			});
 
-            preview.style.display = 'block';
-            downloadBtn.disabled = false;
-            printBtn.disabled = false;
+			preview.style.display = 'block';
+			downloadBtn.disabled = false;
+			printBtn.disabled = false;
 
-            // Store canvases for download
-            window.generatedCanvases = canvases;
-
-            showMessage('Schedule generated successfully!', 'info');
-        }
+			window.generatedCanvases = canvases;
+			showMessage('Schedule generated successfully!', 'info');
+		}
 
         async function renderPage(type, scheduleByDay, dateRange) {
             return new Promise((resolve, reject) => {
@@ -656,14 +727,13 @@
                         return;
                     }
 
-                    // For GVN, use 'routes' coords even if rendering both types
-                    // For boulder-only gyms, use 'boulders' coords
-                    let coords;
-                    if (selectedGym === 'GVN') {
-                        coords = gymCoords['routes'];
-                    } else {
-                        coords = gymCoords[type];
-                    }
+                    // Determine which coordinate set to use
+					let coords;
+					if (selectedGym === 'GVN' || selectedGym === 'PLN') {
+						coords = gymCoords['combined']; // Use 'combined' for GVN and PLN
+					} else {
+						coords = gymCoords[type]; // Use 'routes' or 'boulders' for all other gyms
+					}
 
                     if (!coords) {
                         console.error(`No coordinates found for ${selectedGym} ${type}`);
@@ -705,15 +775,24 @@
 
             weekData.forEach((day, rowIndex) => {
                 const y = tableTop + (rowIndex * rowHeight);
-                
+             
+				let items = day[type] || []; // Default behavior for other gyms
+    
+				// If it's the combined GVN/PLN schedule, merge boulders and routes together
+				if (selectedGym === 'GVN' || selectedGym === 'PLN') {
+					const routes = day.routes || [];
+					const boulders = day.boulders || [];
+					items = routes.concat(boulders);
+				}
+
+				
                 const currentDate = new Date(startSunday);
                 currentDate.setDate(currentDate.getDate() + weekOffset + rowIndex);
                 const dateStr = formatDate(currentDate);
 
-                const items = day[type] || [];
-
                 if (items.length > 0) {
                     const locations = items.map(i => i.location).join(', ');
+					const capitalizedLocations = capitalizeWallNames(locations);
                     const climbType = items[0].climbType;
                     const setterCount = Math.max(...items.map(i => i.setterCount));
 
@@ -721,7 +800,7 @@
                     ctx.fillText(dateStr, tableCoords.date.x, y);
                     
                     // Draw location (truncate if too long)
-                    const truncatedLocation = truncateText(ctx, locations, tableCoords.location.width);
+                    const truncatedLocation = truncateText(ctx, capitalizedLocations, tableCoords.location.width);
                     ctx.fillText(truncatedLocation, tableCoords.location.x, y);
                     
                     // Draw climb type
@@ -750,6 +829,19 @@
             }
             return truncated + '...';
         }
+		
+		function capitalizeWallNames(text) {
+			if (!text) return '';
+
+			// Split the full string by ", " to get each individual wall name
+			return text.split(', ').map(wallName => {
+				// Split each wall name by " " to get the words
+				return wallName.split(' ').map(word => {
+					// Capitalize the first letter of each word and add the rest
+					return word.charAt(0).toUpperCase() + word.slice(1);
+				}).join(' '); // Join the words back together with spaces
+			}).join(', '); // Join the wall names back together with ", "
+		}
 
         function downloadImages() {
             if (!window.generatedCanvases) return;
@@ -765,6 +857,7 @@
                 });
             });
         }
+		initializeState();
     </script>
 </body>
 </html>
