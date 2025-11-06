@@ -640,12 +640,19 @@
             }
 
             function getWallType(walls, gym) {
+                // --- IMPROVEMENT: Handle generic 'ropes' or 'boulders' text explicitly ---
+                if (walls.includes('ropes')) return 'rope';
+                if (walls.includes('boulders')) return 'boulder';
+
                 if (walls.length === 0 || !gymWalls[gym]) return null;
                 const firstWall = walls.find(w => gymWalls[gym][w]);
                 return firstWall ? gymWalls[gym][firstWall]?.type : null;
             }
 
             function generateSchedule() {
+                // --- HELPER: Function to create a unique ID for each set ---
+                const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+
                 const gymCounts = {};
                 const gymCodes = Object.keys(gymNameMap);
                 csvData.forEach(row => {
@@ -680,6 +687,7 @@
                     }
                 }
 
+                // --- CHANGED: Process data without merging entries ---
                 const scheduleByDate = {};
                 csvData.forEach((row, index) => {
                     const date = row['Start Date'];
@@ -697,59 +705,30 @@
                     if (setterCount === 0) return;
 
                     let walls = parseWalls(title, appState.selectedGym);
+                    if (walls.length === 0) {
+                        // Handle generic 'rope' or 'boulder' titles if no specific walls are found
+                        if (title.includes('rope')) walls = ['ropes'];
+                        else if (title.includes('boulder')) walls = ['boulders'];
+                        else return; // Skip if we can't determine the type
+                    }
 
                     if (!scheduleByDate[date]) {
                         scheduleByDate[date] = { date: new Date(date), entries: [] };
                     }
 
-                    if (walls.length > 0) {
-                        scheduleByDate[date].entries.push({ walls: walls, setterCount: setterCount });
-                    } else {
-                        let defaultType = null;
-                        if (title.includes('rope')) defaultType = 'rope';
-                        else if (title.includes('boulder')) defaultType = 'boulder';
-
-                        if (defaultType) {
-                             scheduleByDate[date].entries.push({ walls: [defaultType], isDefault: true, setterCount: setterCount });
-                        }
-                    }
+                    scheduleByDate[date].entries.push({
+                        walls: walls,
+                        setterCount: setterCount
+                    });
                 });
 
-                const combinedData = Object.values(scheduleByDate).flatMap(day => {
-                    const ropes = day.entries.filter(e => e.isDefault ? e.walls.includes('rope') : getWallType(e.walls, appState.selectedGym) === 'rope');
-                    const boulders = day.entries.filter(e => e.isDefault ? e.walls.includes('boulder') : getWallType(e.walls, appState.selectedGym) === 'boulder');
-                    const dayEntries = [];
-
-                    if (ropes.length > 0) {
-                        const allRopeWalls = ropes.flatMap(e => e.walls);
-                        dayEntries.push({
-                            date: day.date,
-                            location: allRopeWalls.includes('rope') ? 'Ropes' : [...new Set(allRopeWalls)].join(', '),
-                            climbType: 'Slab',
-                            setterCount: ropes.reduce((sum, e) => sum + e.setterCount, 0),
-                            type: 'rope'
-                        });
-                    }
-                    if (boulders.length > 0) {
-                        const allBoulderWalls = boulders.flatMap(e => e.walls);
-                        dayEntries.push({
-                            date: day.date,
-                            location: allBoulderWalls.includes('boulder') ? 'Boulders' : [...new Set(allBoulderWalls)].join(', '),
-                            climbType: 'Slab',
-                            setterCount: boulders.reduce((sum, e) => sum + e.setterCount, 0),
-                            type: 'boulder'
-                        });
-                    }
-                    return dayEntries;
-                });
-
-                if (combinedData.length === 0) {
+                const allDates = Object.values(scheduleByDate).map(d => d.date).sort((a, b) => a - b);
+                if (allDates.length === 0) {
                     showMessage('No valid setting schedule data found for the selected gym in this CSV.', 'error');
                     return;
                 }
 
-                combinedData.sort((a, b) => a.date - b.date);
-                const startSunday = new Date(combinedData[0].date);
+                const startSunday = new Date(allDates[0]);
                 startSunday.setDate(startSunday.getDate() - startSunday.getDay());
                 const endSaturday = new Date(startSunday);
                 endSaturday.setDate(endSaturday.getDate() + 13);
@@ -758,11 +737,21 @@
                 window.scheduleStartSunday = startSunday;
                 appState.scheduleByDay = Array(14).fill(null).map(() => ({ routes: [], boulders: [] }));
 
-                combinedData.forEach(item => {
-                    const daysSinceStart = Math.floor((item.date - startSunday) / (1000 * 60 * 60 * 24));
+                // --- CHANGED: Populate the new granular data model ---
+                Object.values(scheduleByDate).forEach(day => {
+                    const daysSinceStart = Math.floor((day.date - startSunday) / (1000 * 60 * 60 * 24));
                     if (daysSinceStart >= 0 && daysSinceStart < 14) {
-                        const target = item.type === 'rope' ? appState.scheduleByDay[daysSinceStart].routes : appState.scheduleByDay[daysSinceStart].boulders;
-                        target.push({ ...item, dateStr: formatDate(item.date) });
+                        day.entries.forEach(entry => {
+                            const type = getWallType(entry.walls, appState.selectedGym);
+                            const targetArray = (type === 'rope') ? appState.scheduleByDay[daysSinceStart].routes : appState.scheduleByDay[daysSinceStart].boulders;
+
+                            targetArray.push({
+                                id: generateUniqueId(),
+                                walls: entry.walls,
+                                setterCount: entry.setterCount,
+                                climbType: 'Slab' // Default value, can be edited later
+                            });
+                        });
                     }
                 });
 
@@ -892,7 +881,6 @@
                     const y = tableTop + (rowIndex * rowHeight);
                     const dayIndex = weekOffset + rowIndex;
 
-                    // --- BUG FIX: Use appState.selectedGym instead of undefined selectedGym ---
                     let items = (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN')
                         ? (day.routes || []).concat(day.boulders || [])
                         : (day[type] || []);
@@ -901,8 +889,9 @@
                     currentDate.setDate(currentDate.getDate() + dayIndex);
                     const dateStr = formatDate(currentDate);
 
-                    const locationText = items.length > 0 ? capitalizeWallNames(items.map(i => i.location).join(', ')) : '-';
-                    const climbTypeText = items.length > 0 ? items[0].climbType : '-';
+                    // --- CHANGED: Aggregate data from the new granular model for display ---
+                    const locationText = items.length > 0 ? capitalizeWallNames(items.map(i => i.walls.join(', ')).join(', ')) : '-';
+                    const climbTypeText = items.length > 0 ? items[0].climbType : '-'; // Display type of the first set
                     const setterCountText = items.length > 0 ? String(items.reduce((total, item) => total + item.setterCount, 0)) : '-';
 
                     ctx.fillText(dateStr, tableCoords.date.x, y);
@@ -910,13 +899,16 @@
                     ctx.fillText(climbTypeText, tableCoords.climbType.x, y);
                     ctx.fillText(setterCountText, tableCoords.setters.x, y);
 
+                    // --- CHANGED: Pass the ID of the first item to the clickable region ---
+                    // This allows the editor to target a specific entry.
+                    const firstItemId = items.length > 0 ? items[0].id : null;
                     const textY = y - (rowHeight / 2);
                     const textHeight = rowHeight;
                     const canvasType = (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') ? 'combined' : type;
 
-                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'location', value: locationText, x: tableCoords.location.x, y: textY, width: tableCoords.location.width, height: textHeight, canvasType });
-                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'climbType', value: climbTypeText, x: tableCoords.climbType.x, y: textY, width: tableCoords.climbType.width, height: textHeight, canvasType });
-                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'setterCount', value: setterCountText, x: tableCoords.setters.x, y: textY, width: tableCoords.setters.width, height: textHeight, canvasType });
+                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'location', value: locationText, x: tableCoords.location.x, y: textY, width: tableCoords.location.width, height: textHeight, canvasType, id: firstItemId });
+                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'climbType', value: climbTypeText, x: tableCoords.climbType.x, y: textY, width: tableCoords.climbType.width, height: textHeight, canvasType, id: firstItemId });
+                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'setterCount', value: setterCountText, x: tableCoords.setters.x, y: textY, width: tableCoords.setters.width, height: textHeight, canvasType, id: firstItemId });
                 });
             }
 
@@ -991,33 +983,70 @@
             }
 
             function updateScheduleData(region, newValue) {
-                const dayData = appState.scheduleByDay[region.dayIndex];
-                let targetArray = dayData[region.dataType];
                 if (newValue === region.value) return;
 
-                if (targetArray.length > 0) {
-                    const entry = targetArray[0];
-                    if (region.field === 'setterCount') {
-                        entry[region.field] = Math.max(0, parseInt(newValue, 10) || 0);
+                const dayData = appState.scheduleByDay[region.dayIndex];
+                let itemToUpdate = null;
+                let sourceArray = null; // This will hold the reference to either dayData.routes or dayData.boulders
+
+                // --- FIX: For combined gyms, search BOTH routes and boulders arrays to find the item ---
+                if (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') {
+                    itemToUpdate = dayData.routes.find(item => item.id === region.id);
+                    if (itemToUpdate) {
+                        sourceArray = dayData.routes;
                     } else {
-                        entry[region.field] = newValue;
+                        itemToUpdate = dayData.boulders.find(item => item.id === region.id);
+                        if (itemToUpdate) {
+                            sourceArray = dayData.boulders;
+                        }
                     }
-                    if (region.field === 'location' && !newValue) dayData[region.dataType] = [];
+                } else {
+                    // Original logic for gyms with separate pages
+                    sourceArray = dayData[region.dataType];
+                    if (sourceArray) {
+                        itemToUpdate = sourceArray.find(item => item.id === region.id);
+                    }
+                }
+
+                if (itemToUpdate) {
+                    // We found an existing item to edit
+                    if (region.field === 'location') {
+                        if (!newValue) {
+                            // If location is cleared, filter the item out of its specific source array
+                            const updatedArray = sourceArray.filter(item => item.id !== region.id);
+                            if (dayData.routes === sourceArray) dayData.routes = updatedArray;
+                            else dayData.boulders = updatedArray;
+                        } else {
+                            // Update the walls for this specific item
+                            itemToUpdate.walls = newValue.split(',').map(w => w.trim());
+                        }
+                    } else {
+                        // This handles 'setterCount' and 'climbType'
+                        itemToUpdate[region.field] = newValue;
+                    }
+
                 } else if (newValue && newValue !== '-' && newValue !== '0') {
+                    // We are adding a new entry to an empty day cell
                     const newEntry = {
+                        id: Date.now().toString(36) + Math.random().toString(36).substr(2),
                         date: new Date(window.scheduleStartSunday.getTime() + region.dayIndex * 24 * 60 * 60 * 1000),
-                        dateStr: formatDate(new Date(window.scheduleStartSunday.getTime() + region.dayIndex * 24 * 60 * 60 * 1000)),
-                        location: 'New Set',
+                        walls: ['New Set'],
                         climbType: 'Slab',
                         setterCount: 1
                     };
+
                     if (region.field === 'setterCount') {
-                        newEntry[region.field] = Math.max(1, parseInt(newValue, 10) || 1);
-                    } else {
+                        newEntry.setterCount = Math.max(1, parseInt(newValue, 10) || 1);
+                    } else if (region.field === 'location') {
+                        newEntry.walls = newValue.split(',').map(w => w.trim());
+                    } else { // climbType
                         newEntry[region.field] = newValue;
                     }
-                    targetArray.push(newEntry);
+
+                    // Add the new entry to the correct array based on its region type
+                    dayData[region.dataType].push(newEntry);
                 }
+
                 renderApp();
             }
 
