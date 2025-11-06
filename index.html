@@ -134,7 +134,6 @@
             padding: 40px;
             margin-bottom: 30px;
             border: 1px solid #ddd;
-            page-break-after: always;
             position: relative;
             min-height: 1400px;
         }
@@ -242,26 +241,46 @@
         }
 
         @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            .container {
-                box-shadow: none;
-                padding: 0;
-            }
-            .controls, .buttons {
-                display: none !important;
-            }
-            #preview {
-                display: block !important;
-            }
-            .schedule-page {
-                border: none;
-                margin: 0;
-                padding: 40px;
-            }
-        }
+			@page {
+				size: auto; /* Use the paper size selected by the user */
+				margin: 0;  /* Set all margins to zero */
+			}
+
+			/* Hide all the UI elements inside the main container, EXCEPT the preview area */
+			body > .container > *:not(#preview) {
+				display: none;
+			}
+
+			/* Reset body and container for a clean, edgeless print layout */
+			body, .container {
+				background: white;
+				padding: 0;
+				margin: 0;
+				box-shadow: none;
+				border: none;
+			}
+
+			/* Ensure the preview container is visible and takes up the full space */
+			#preview {
+				display: block !important;
+				margin: 0;
+				padding: 0;
+			}
+
+			/* Style the wrapper DIV for each generated canvas */
+			#preview > div {
+				margin: 0;
+				border: none;
+			}
+
+			/* Make the canvas image itself fill the width of the page */
+			#preview canvas {
+				width: 100%;
+				height: auto;
+				box-shadow: none;
+				border: none;
+			}
+		}
 
         .error {
             background: #fee;
@@ -280,6 +299,58 @@
             color: #0050b3;
             margin-top: 20px;
         }
+		
+		/* --- STYLES FOR THE INSTRUCTIONS MODAL --- */
+		.modal-overlay {
+			display: none; /* Hidden by default */
+			position: fixed; /* Stay in place */
+			z-index: 1000; /* Sit on top of everything */
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto; /* Enable scroll if needed */
+			background-color: rgba(0,0,0,0.6); /* Black background with opacity */
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 10% auto; /* 10% from the top and centered */
+			padding: 40px;
+			border: 1px solid #888;
+			width: 80%;
+			max-width: 700px;
+			border-radius: 8px;
+			position: relative;
+		}
+
+		.modal-content h2 {
+			margin-top: 0;
+			color: #1e3a5f;
+		}
+
+		.modal-content ol, .modal-content ul {
+			margin-left: 20px;
+		}
+		 .modal-content li {
+			margin-bottom: 10px;
+		}
+
+		.modal-close {
+			color: #aaa;
+			position: absolute;
+			top: 15px;
+			right: 25px;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.modal-close:hover,
+		.modal-close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
     </style>
 </head>
 <body>
@@ -309,8 +380,11 @@
 
         <div class="buttons">
             <button class="btn-primary" id="generate-btn" disabled>Generate Schedule</button>
-            <button class="btn-secondary" id="download-btn" disabled>Download for Instagram</button>
+
+            <button class="btn-secondary" id="download-btn" disabled>Download Image</button>
             <button class="btn-secondary" id="print-btn" disabled>Print / Save PDF</button>
+			
+			<button class="btn-secondary" id="help-btn">Instructions</button>
         </div>
 
         <div id="messages"></div>
@@ -321,7 +395,7 @@
     <script src="config.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script>
-
+	document.addEventListener('DOMContentLoaded', function() {
         let csvData = null;
         let selectedGym = '';
 
@@ -343,6 +417,9 @@
         const printBtn = document.getElementById('print-btn');
         const messages = document.getElementById('messages');
         const preview = document.getElementById('preview');
+		const helpBtn = document.getElementById('help-btn');
+		const modalOverlay = document.getElementById('help-modal-overlay');
+		const modalCloseBtn = document.getElementById('modal-close-btn');
 
         // Upload area interactions
         uploadArea.addEventListener('click', () => csvInput.click());
@@ -404,13 +481,29 @@
         }
 
         generateBtn.addEventListener('click', generateSchedule);
+		downloadBtn.addEventListener('click', downloadImages);
         printBtn.addEventListener('click', () => window.print());
+		
+		// --- ADD THESE THREE LISTENERS ---
+		helpBtn.addEventListener('click', () => {
+			modalOverlay.style.display = 'block';
+		});
+
+		modalCloseBtn.addEventListener('click', () => {
+			modalOverlay.style.display = 'none';
+		});
+
+		// Close the modal if the user clicks anywhere on the gray overlay
+		window.addEventListener('click', (event) => {
+			if (event.target == modalOverlay) {
+				modalOverlay.style.display = 'none';
+			}
+		});
 		
 		function initializeState() {
 			selectedGym = gymSelect.value;
 			checkReady();
 		}
-		initializeState();
 		
 		function expandWallRanges(titleStr) {
 			// Regex to find all patterns like "B1-2", "C3-5", etc.
@@ -794,7 +887,7 @@
                     const locations = items.map(i => i.location).join(', ');
 					const capitalizedLocations = capitalizeWallNames(locations);
                     const climbType = items[0].climbType;
-                    const setterCount = Math.max(...items.map(i => i.setterCount));
+                    const setterCount = items.reduce((total, item) => total + item.setterCount, 0);
 
                     // Draw date
                     ctx.fillText(dateStr, tableCoords.date.x, y);
@@ -858,6 +951,40 @@
             });
         }
 		initializeState();
+	});	
     </script>
+<!-- ======================= -->
+<!--     INSTRUCTIONS MODAL    -->
+<!-- ======================= -->
+<div id="help-modal-overlay" class="modal-overlay">
+    <div class="modal-content">
+        <span id="modal-close-btn" class="modal-close">&times;</span>
+        <h2>How to Use the Schedule Generator</h2>
+        <ol>
+            <li>
+                <strong>Export from Humanity:</strong> In Humanity, go to the "Schedule" tab and export the desired two-week period as a CSV file. (Tools > Export Schedule)
+            </li>
+            <li>
+                <strong>Select Gym:</strong> Choose your gym location from the dropdown menu.
+            </li>
+            <li>
+                <strong>Upload CSV:</strong> Drag and drop the exported CSV file onto the upload area, or click to browse and select it.
+            </li>
+            <li>
+                <strong>Generate:</strong> Click the "Generate Schedule" button. The tool will process the file and display a preview of the schedule image(s).
+            </li>
+            <li>
+                <strong>Download or Print:</strong>
+                <ul>
+                    <li>Click <strong>"Download Image"</strong> to save the schedule(s) as PNG files, perfect for posting online and using in emails.</li>
+                    <li>Click <strong>"Print / Save PDF"</strong> to open a print-friendly version, which you can print directly or save as a clean PDF for in-gym display.</li>
+                </ul>
+            </li>
+        </ol>
+        <p style="font-size: 12px; color: #666; margin-top: 20px;">
+            <strong>Troubleshooting:</strong> If the wrong gym is detected, the tool will ask you to confirm before proceeding. If schedule data seems to be missing, ensure the 'Title' column in the CSV contains valid wall names.
+        </p>
+    </div>
+</div>
 </body>
 </html>
