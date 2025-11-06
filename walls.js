@@ -147,7 +147,7 @@ const gymWalls = {
 		"d12": {"type": "boulder", "climb_type": "Vert"},
 		"d13": {"type": "boulder", "climb_type": "Vert"},
 		"d14": {"type": "boulder", "climb_type": "Vert"}
-	}
+	},
     'FTW': {
 		"a1": {"type": "boulder", "climb_type": "Vert"},
 		"a2": {"type": "boulder", "climb_type": "Vert"},
