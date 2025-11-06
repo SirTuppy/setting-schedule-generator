@@ -1,4 +1,4 @@
-const gymWalls = {
+gymWalls = {
     'DSN': { // Design Walls
         "ziggy": {"type": "rope", "climb_type": "Slab"},
         "stardust": {"type": "rope", "climb_type": "Slab"},

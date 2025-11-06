@@ -244,6 +244,7 @@
 			@page {
 				size: auto; /* Use the paper size selected by the user */
 				margin: 0;  /* Set all margins to zero */
+				padding: 0;
 			}
 
 			/* Hide all the UI elements inside the main container, EXCEPT the preview area */
@@ -269,9 +270,11 @@
 
 			/* Style the wrapper DIV for each generated canvas */
 			#preview > div {
-				margin: 0;
-				border: none;
-			}
+                margin: 0 !important; /* Force margin removal */
+                padding: 0 !important;/* Force padding removal */
+                border: none !important;
+                box-shadow: none !important;
+            }
 
 			/* Make the canvas image itself fill the width of the page */
 			#preview canvas {
@@ -351,6 +354,65 @@
 			text-decoration: none;
 			cursor: pointer;
 		}
+        /* --- NEW STYLES FOR BUTTON REDESIGN --- */
+
+        .buttons {
+            display: flex;
+            justify-content: space-between; /* Pushes the two groups apart */
+            align-items: center;
+            flex-wrap: wrap; /* Allows wrapping on very small screens */
+            gap: 20px; /* Adds space between groups if they wrap */
+            margin-top: 20px;
+        }
+
+        .button-group-main, .button-group-utility {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between buttons within a group */
+            flex-wrap: wrap;
+        }
+
+        /* Style for all SVGs inside buttons */
+        .buttons button svg {
+            width: 1em;  /* Scales with the button's font size */
+            height: 1em;
+            vertical-align: -0.15em; /* Better vertical alignment with text */
+            margin-right: 8px; /* Space between icon and text */
+            stroke-width: 2.5; /* Makes the icon lines a bit bolder */
+        }
+
+        /* Make the icon color match the text color automatically */
+        .btn-primary svg, .btn-secondary svg {
+             stroke: white;
+        }
+
+        /* New "Utility" button style (ghost button) */
+        .btn-utility {
+            background-color: transparent;
+            color: #1e3a5f; /* Dark blue text */
+            border: 2px solid #1e3a5f; /* Dark blue border */
+            padding: 10px 20px; /* Slightly smaller padding */
+        }
+
+        .btn-utility svg {
+            stroke: #1e3a5f; /* Dark blue icon */
+            transition: stroke 0.3s;
+        }
+
+        /* Hover effect for utility buttons */
+        .btn-utility:hover {
+            background-color: #1e3a5f; /* Dark blue background on hover */
+            color: white; /* White text on hover */
+        }
+
+        /* Make the icon turn white on hover too! */
+        .btn-utility:hover svg {
+            stroke: white;
+        }
+
+        .buttons button span {
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -378,13 +440,46 @@
             <input type="file" id="csv-input" accept=".csv" style="display: none;">
         </div>
 
+        <!-- ======================= -->
+        <!--     BUTTONS SECTION       -->
+        <!-- ======================= -->
         <div class="buttons">
-            <button class="btn-primary" id="generate-btn" disabled>Generate Schedule</button>
+            <!-- Main Actions Group -->
+            <div class="button-group-main">
+                <button class="btn-primary" id="generate-btn" disabled>
+                    <!-- Generate Icon (Optional, can be a checkmark or similar) -->
+                    <span>Generate Schedule</span>
+                </button>
+                <button class="btn-secondary" id="download-btn" disabled>
+                    <!-- Download SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>Download Image</span>
+                </button>
+                <button class="btn-secondary" id="print-btn" disabled>
+                    <!-- Print SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    <span>Print / Save PDF</span>
+                </button>
+            </div>
 
-            <button class="btn-secondary" id="download-btn" disabled>Download Image</button>
-            <button class="btn-secondary" id="print-btn" disabled>Print / Save PDF</button>
-			
-			<button class="btn-secondary" id="help-btn">Instructions</button>
+            <!-- Utility Actions Group -->
+            <div class="button-group-utility">
+                <button class="btn-utility" id="save-btn" disabled>
+                    <!-- Save SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24"height="24"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <span>Save as Latest</span>
+                </button>
+                <button class="btn-utility" id="load-btn" disabled>
+                    <!-- Load SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                    <span>Load Latest</span>
+                </button>
+                <button class="btn-utility" id="help-btn">
+                    <!-- Help SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <span>Instructions</span>
+                </button>
+            </div>
         </div>
 
         <div id="messages"></div>
@@ -395,596 +490,652 @@
     <script src="config.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script>
-	document.addEventListener('DOMContentLoaded', function() {
-        let csvData = null;
-        let selectedGym = '';
+        document.addEventListener('DOMContentLoaded', function() {
+            let csvData = null;
 
-        // Map dropdown codes to actual gym names in Humanity CSV
-        const gymNameMap = {
-            'DSN': 'Design',
-            'PLN': 'Plano',
-            'DTN': 'Denton',
-            'FTW': 'Fort Worth',
-            'GVN': 'Grapevine',
-            'HIL': 'Dallas Hill'  // or just "Hill"?
-        };
+            const appState = {
+                scheduleByDay: [],
+                dateRange: '',
+                selectedGym: '',
+                clickableRegions: []
+            };
 
-        const uploadArea = document.getElementById('upload-area');
-        const csvInput = document.getElementById('csv-input');
-        const gymSelect = document.getElementById('gym-select');
-        const generateBtn = document.getElementById('generate-btn');
-        const downloadBtn = document.getElementById('download-btn');
-        const printBtn = document.getElementById('print-btn');
-        const messages = document.getElementById('messages');
-        const preview = document.getElementById('preview');
-		const helpBtn = document.getElementById('help-btn');
-		const modalOverlay = document.getElementById('help-modal-overlay');
-		const modalCloseBtn = document.getElementById('modal-close-btn');
+            const gymNameMap = {
+                'DSN': 'Design',
+                'PLN': 'Plano',
+                'DTN': 'Denton',
+                'FTW': 'Fort Worth',
+                'GVN': 'Grapevine',
+                'HIL': 'Dallas Hill'
+            };
 
-        // Upload area interactions
-        uploadArea.addEventListener('click', () => csvInput.click());
-        
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-        
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file) handleFile(file);
-        });
+            // DOM Element References
+            const uploadArea = document.getElementById('upload-area');
+            const csvInput = document.getElementById('csv-input');
+            const gymSelect = document.getElementById('gym-select');
+            const generateBtn = document.getElementById('generate-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const printBtn = document.getElementById('print-btn');
+            const messages = document.getElementById('messages');
+            const preview = document.getElementById('preview');
+            const helpBtn = document.getElementById('help-btn');
+            const modalOverlay = document.getElementById('help-modal-overlay');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const loadBtn = document.getElementById('load-btn');
 
-        csvInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) handleFile(file);
-        });
-
-        gymSelect.addEventListener('change', (e) => {
-            selectedGym = e.target.value;
-            checkReady();
-        });
-
-        function handleFile(file) {
-            if (!file.name.endsWith('.csv')) {
-                showMessage('Please upload a CSV file', 'error');
-                return;
-            }
-
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: (results) => {
-                    csvData = results.data;
-                    showMessage(`CSV loaded successfully (${csvData.length} rows)`, 'info');
-                    checkReady();
-                },
-                error: (error) => {
-                    showMessage(`Error parsing CSV: ${error.message}`, 'error');
-                }
+            // Event Listeners
+            uploadArea.addEventListener('click', () => csvInput.click());
+            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', () => { uploadArea.classList.remove('dragover'); });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) handleFile(file);
             });
-        }
-
-        function checkReady() {
-            if (csvData && selectedGym) {
-                generateBtn.disabled = false;
-            }
-        }
-
-        function showMessage(msg, type) {
-            messages.innerHTML = `<div class="${type}">${msg}</div>`;
-        }
-
-        generateBtn.addEventListener('click', generateSchedule);
-		downloadBtn.addEventListener('click', downloadImages);
-        printBtn.addEventListener('click', () => window.print());
-		
-		// --- ADD THESE THREE LISTENERS ---
-		helpBtn.addEventListener('click', () => {
-			modalOverlay.style.display = 'block';
-		});
-
-		modalCloseBtn.addEventListener('click', () => {
-			modalOverlay.style.display = 'none';
-		});
-
-		// Close the modal if the user clicks anywhere on the gray overlay
-		window.addEventListener('click', (event) => {
-			if (event.target == modalOverlay) {
-				modalOverlay.style.display = 'none';
-			}
-		});
-		
-		function initializeState() {
-			selectedGym = gymSelect.value;
-			checkReady();
-		}
-		
-		function expandWallRanges(titleStr) {
-			// Regex to find all patterns like "B1-2", "C3-5", etc.
-			const rangeRegex = /([a-zA-Z]+)(\d+)-(\d+)/g;
-    
-			return titleStr.replace(rangeRegex, (match, prefix, startStr, endStr) => {
-				const start = parseInt(startStr);
-				const end = parseInt(endStr);
-				const expanded = [];
-				for (let i = start; i <= end; i++) {
-					expanded.push(prefix + i);
-				}
-				return expanded.join(', '); // Turns "B1-2" into "B1, B2"
-			});
-		}
-
-        function parseWalls(titleStr, gym) {
-			if (!titleStr || !gymWalls[gym]) return [];
-
-			const currentGymWalls = gymWalls[gym];
-			const expandedTitle = expandWallRanges(titleStr);
-    
-			let cleanTitle = expandedTitle.toLowerCase().replace('jcca - ', '');
-			
-			const parts = cleanTitle.replace(/\./g, '').split(/[,\/\s+]+/g).filter(s => s);
-			const walls = [];
-			let buffer = [];
-
-			for (const part of parts) {
-				buffer.push(part);
-				const potentialWall = buffer.join(' ');
-
-				if (currentGymWalls[potentialWall]) {
-					walls.push(potentialWall);
-					buffer = [];
-					continue;
-				}
-			}
-    
-			for(const part of buffer){
-				if(currentGymWalls[part]){
-					walls.push(part);
-				}
-			}
-
-			return [...new Set(walls)];
-		}
-
-        function getClimbType(walls, gym) {
-			if (walls.length === 0 || !gymWalls[gym]) return '-';
-    
-			const types = walls.map(w => gymWalls[gym][w]?.climb_type).filter(t => t);
-			if (types.length === 0) return '-';
-
-			// Count occurrences
-			const counts = {};
-			types.forEach(t => counts[t] = (counts[t] || 0) + 1);
-
-			// Return most common
-			return Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
-		}
-
-        function getWallType(walls, gym) {
-			if (walls.length === 0 || !gymWalls[gym]) return null;
-			return gymWalls[gym][walls[0]]?.type;
-		}
-
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            return `${month}/${day}`;
-        }
-
-        function generateSchedule() {
-			// --- START: NEW GYM DETECTION LOGIC ---
-
-			// 1. Pre-scan the CSV to detect the most likely gym.
-			const gymCounts = {};
-			const gymCodes = Object.keys(gymNameMap); // ['DSN', 'PLN', ...]
-
-			csvData.forEach(row => {
-				const location = (row['Location'] || '').trim();
-				if (location) {
-					for (const code of gymCodes) {
-						if (location.includes(gymNameMap[code])) {
-							gymCounts[code] = (gymCounts[code] || 0) + 1;
-							break; // Stop after finding the first match for this row
-						}
-					}
-				}
-			});
-
-			// 2. Determine the detected gym (the one with the most mentions).
-			let detectedGym = null;
-			if (Object.keys(gymCounts).length > 0) {
-				detectedGym = Object.keys(gymCounts).sort((a, b) => gymCounts[b] - gymCounts[a])[0];
-			}
-
-			// 3. If a gym was detected and it doesn't match the user's selection, prompt them.
-			if (detectedGym && detectedGym !== selectedGym) {
-				const selectedGymFullName = gymNameMap[selectedGym] || selectedGym;
-				const detectedGymFullName = gymNameMap[detectedGym] || detectedGym;
-				
-				const message = `${selectedGymFullName} was selected, but the CSV data appears to be for ${detectedGymFullName}.\n\nWould you like to switch to ${detectedGymFullName} and generate the schedule?`;
-
-				if (confirm(message)) {
-					// If user clicks "OK", switch the gym and re-run.
-					gymSelect.value = detectedGym;
-					selectedGym = detectedGym;
-					generateSchedule(); // Re-run the function with the correct gym
-					return; // Stop the current execution
-				} else {
-					// If user clicks "Cancel", just stop.
-					return;
-				}
-			}
-			
-			// --- END: NEW GYM DETECTION LOGIC ---
-
-
-			// --- Core data processing logic (remains the same) ---
-			const scheduleByDate = {};
-
-			csvData.forEach((row, index) => {
-				const date = row['Start Date'];
-				const title = row['Title'];
-				const location = (row['Location'] || '').trim();
-
-				// This check is now a fallback, as we've already mostly verified the gym.
-				if (!date || !title || !location.includes(gymNameMap[selectedGym])) {
-					return;
-				}
-
-				const skipTitles = ['admin', 'personal training', 'washing', 'forerunning', 'climb time', '@hill', '@design', '@plano', '@dtn', '@ftw'];
-				if (skipTitles.some(skip => title.toLowerCase().includes(skip))) {
-					return;
-				}
-
-				const walls = parseWalls(title, selectedGym);
-				if (walls.length === 0) {
-					console.log(`Row ${index}: Skipped - no valid walls found in "${title}" for gym ${selectedGym}`);
-					return;
-				}
-				
-				const names = (row['Employee Names'] || '').split('/').map(n => n.trim()).filter(n => n);
-				const setterCount = names.length;
-
-				if (!scheduleByDate[date]) {
-					scheduleByDate[date] = { date: new Date(date), walls: [], setterCount: 0 };
-				}
-
-				scheduleByDate[date].walls.push(...walls);
-				scheduleByDate[date].setterCount += setterCount;
-			});
-
-			const scheduleData = Object.values(scheduleByDate).map(day => {
-				const uniqueWalls = [...new Set(day.walls)];
-				return {
-					date: day.date,
-					dateStr: formatDate(day.date),
-					location: uniqueWalls.join(', '),
-					climbType: getClimbType(uniqueWalls, selectedGym),
-					setterCount: day.setterCount
-				};
-			});
-
-			scheduleData.sort((a, b) => a.date - b.date);
-
-			if (scheduleData.length === 0) {
-				// This message will now only show if the CSV is for the right gym but has no valid setting entries.
-				showMessage('No valid setting schedule data found for the selected gym in this CSV.', 'error');
-				return;
-			}
-
-			// ... the rest of the function continues as before ...
-			const startSunday = new Date(scheduleData[0].date);
-			startSunday.setDate(startSunday.getDate() - startSunday.getDay());
-
-			const endSaturday = new Date(startSunday);
-			endSaturday.setDate(endSaturday.getDate() + 13);
-
-			const dateRange = `${formatDate(startSunday)}-${formatDate(endSaturday)}`;
-			window.scheduleStartSunday = startSunday;
-
-			const scheduleByDay = Array(14).fill(null).map(() => ({ routes: [], boulders: [] }));
-			scheduleData.forEach(item => {
-				const daysSinceStart = Math.floor((item.date - startSunday) / (1000 * 60 * 60 * 24));
-				if (daysSinceStart >= 0 && daysSinceStart < 14) {
-					 const dayData = { ...item };
-					 const walls = parseWalls(item.location, selectedGym);
-
-					 const ropeWalls = walls.filter(w => gymWalls[selectedGym][w]?.type === 'rope');
-					 const boulderWalls = walls.filter(w => gymWalls[selectedGym][w]?.type === 'boulder');
-
-					 if(ropeWalls.length > 0){
-						 scheduleByDay[daysSinceStart].routes.push({
-							 ...dayData,
-							 location: ropeWalls.join(', '),
-							 climbType: getClimbType(ropeWalls, selectedGym)
-						 });
-					 }
-					 if(boulderWalls.length > 0){
-						 scheduleByDay[daysSinceStart].boulders.push({
-							 ...dayData,
-							 location: boulderWalls.join(', '),
-							 climbType: getClimbType(boulderWalls, selectedGym)
-						 });
-					 }
-				}
-			});
-
-			const hasRoutes = scheduleByDay.some(day => day.routes.length > 0);
-			const hasBoulders = scheduleByDay.some(day => day.boulders.length > 0);
-
-			if (!hasRoutes && !hasBoulders) {
-				showMessage('No schedule data found for selected gym', 'error');
-				return;
-			}
-
-			renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders);
-		}
-
-        async function renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders) {
-			preview.innerHTML = '';
-			const canvases = [];
-
-			// --- START: NEW, SMARTER ROUTER LOGIC ---
-
-			// Case 1: Handle Combined Gyms (GVN, PLN)
-			if (selectedGym === 'GVN' || selectedGym === 'PLN') {
-				// These gyms have one combined page. Render it if there is ANY data.
-				if (hasRoutes || hasBoulders) {
-					// We pass 'routes' as a placeholder type; the renderPage function knows to
-					// look for the 'combined' coordinates for these gyms.
-					const canvas = await renderPage('routes', scheduleByDay, dateRange);
-					canvases.push({ canvas, name: `${selectedGym}_schedule.png` });
-				}
-			}
-			
-			// Case 2: Handle Boulders-Only Gyms (HIL, DTN, FTW)
-			else if (selectedGym === 'HIL' || selectedGym === 'DTN' || selectedGym === 'FTW') {
-				// These gyms have one page, and only if there is boulder data.
-				if (hasBoulders) {
-					const canvas = await renderPage('boulders', scheduleByDay, dateRange);
-					canvases.push({ canvas, name: `${selectedGym}_boulders_schedule.png` });
-				}
-			}
-			
-			// Case 3: Handle Split-Page Gyms (DSN)
-			else {
-				// This is the default behavior for gyms with separate pages.
-				if (hasRoutes) {
-					const canvas = await renderPage('routes', scheduleByDay, dateRange);
-					canvases.push({ canvas, name: `${selectedGym}_routes_schedule.png` });
-				}
-				if (hasBoulders) {
-					const canvas = await renderPage('boulders', scheduleByDay, dateRange);
-					canvases.push({ canvas, name: `${selectedGym}_boulders_schedule.png` });
-				}
-			}
-
-			// Display canvases (this part remains the same)
-			canvases.forEach(({ canvas, name }) => {
-				const container = document.createElement('div');
-				container.style.marginBottom = '20px';
-				canvas.style.maxWidth = '100%';
-				canvas.style.height = 'auto';
-				canvas.style.border = '1px solid #ddd';
-				container.appendChild(canvas);
-				preview.appendChild(container);
-			});
-
-			preview.style.display = 'block';
-			downloadBtn.disabled = false;
-			printBtn.disabled = false;
-
-			window.generatedCanvases = canvases;
-			showMessage('Schedule generated successfully!', 'info');
-		}
-
-        async function renderPage(type, scheduleByDay, dateRange) {
-            return new Promise((resolve, reject) => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 791;
-                canvas.height = 1024;
-                const ctx = canvas.getContext('2d');
-
-                // Determine the correct template file name
-                let templateFile;
-                if (selectedGym === 'GVN') {
-                    // GVN has only one combined page
-                    templateFile = `templates/${selectedGym}_routes.png`;
-                } else if (selectedGym === 'HIL' || selectedGym === 'DTN' || selectedGym === 'FTW') {
-                    // Boulder-only gyms
-                    templateFile = `templates/${selectedGym}_boulders.png`;
-                } else {
-                    // DSN and PLN have separate routes/boulders
-                    templateFile = `templates/${selectedGym}_${type}.png`;
-                }
-
-                // Load background image
-                const img = new Image();
-                img.onload = () => {
-                    // Draw background
-                    ctx.drawImage(img, 0, 0, 791, 1024);
-
-                    //Render the date range header
-                    // 1. Get coordinates for this gym/type FIRST
-                    const gymCoords = templateCoords[selectedGym];
-                    if (!gymCoords) {
-                        console.error(`No coordinates found for ${selectedGym}`);
-                        resolve(canvas);
-                        return;
-                    }
-
-                    // Determine which coordinate set to use
-					let coords;
-					if (selectedGym === 'GVN' || selectedGym === 'PLN') {
-						coords = gymCoords['combined']; // Use 'combined' for GVN and PLN
-					} else {
-						coords = gymCoords[type]; // Use 'routes' or 'boulders' for all other gyms
-					}
-
-                    if (!coords) {
-                        console.error(`No coordinates found for ${selectedGym} ${type}`);
-                        resolve(canvas);
-                        return;
-                    }
-
-                    // 2. NOW that 'coords' exists, we can render the header
-                    if (coords.header) {
-                        ctx.font = 'bold 24px Montserrat, Arial, sans-serif';
-                        ctx.fillStyle = '#1e3a5f';
-                        ctx.textAlign = 'right';
-                        ctx.fillText(dateRange, coords.header.x, coords.header.y);
-                        ctx.textAlign = 'left';
-                    }
-
-                    // 3. Continue with the rest of the rendering
-                    ctx.fillStyle = '#1e3a5f';
-                    ctx.font = '14px Montserrat, Arial, sans-serif';
-                    ctx.textBaseline = 'middle';
-
-                    // Render left table (week 1)
-                    const week1 = scheduleByDay.slice(0, 7);
-                    renderTableData(ctx, week1, type, coords.leftTable, coords.tableTop, coords.rowHeight, 0);
-
-                    // Render right table (week 2)
-                    const week2 = scheduleByDay.slice(7, 14);
-                    renderTableData(ctx, week2, type, coords.rightTable, coords.tableTop, coords.rowHeight, 7);
-
-                    resolve(canvas);
-                };
-                img.onerror = reject;
-                img.src = templateFile;
+            csvInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) handleFile(file);
             });
-        }
-
-        function renderTableData(ctx, weekData, type, tableCoords, tableTop, rowHeight, weekOffset) {
-            const startSunday = window.scheduleStartSunday;
-
-            weekData.forEach((day, rowIndex) => {
-                const y = tableTop + (rowIndex * rowHeight);
-             
-				let items = day[type] || []; // Default behavior for other gyms
-    
-				// If it's the combined GVN/PLN schedule, merge boulders and routes together
-				if (selectedGym === 'GVN' || selectedGym === 'PLN') {
-					const routes = day.routes || [];
-					const boulders = day.boulders || [];
-					items = routes.concat(boulders);
-				}
-
-				
-                const currentDate = new Date(startSunday);
-                currentDate.setDate(currentDate.getDate() + weekOffset + rowIndex);
-                const dateStr = formatDate(currentDate);
-
-                if (items.length > 0) {
-                    const locations = items.map(i => i.location).join(', ');
-					const capitalizedLocations = capitalizeWallNames(locations);
-                    const climbType = items[0].climbType;
-                    const setterCount = items.reduce((total, item) => total + item.setterCount, 0);
-
-                    // Draw date
-                    ctx.fillText(dateStr, tableCoords.date.x, y);
-                    
-                    // Draw location (truncate if too long)
-                    const truncatedLocation = truncateText(ctx, capitalizedLocations, tableCoords.location.width);
-                    ctx.fillText(truncatedLocation, tableCoords.location.x, y);
-                    
-                    // Draw climb type
-                    ctx.fillText(climbType, tableCoords.climbType.x, y);
-                    
-                    // Draw setter count
-                    ctx.fillText(String(setterCount), tableCoords.setters.x, y);
-                } else {
-                    // Draw empty row with date
-                    ctx.fillText(dateStr, tableCoords.date.x, y);
-                    ctx.fillText('-', tableCoords.location.x, y);
-                    ctx.fillText('-', tableCoords.climbType.x, y);
-                    ctx.fillText('-', tableCoords.setters.x, y);
-                }
+            gymSelect.addEventListener('change', (e) => {
+                appState.selectedGym = e.target.value;
+                checkReady();
+                updateLoadButtonState();
             });
-        }
+            generateBtn.addEventListener('click', generateSchedule);
+            downloadBtn.addEventListener('click', downloadImages);
+            printBtn.addEventListener('click', () => window.print());
+            helpBtn.addEventListener('click', () => { modalOverlay.style.display = 'block'; });
+            modalCloseBtn.addEventListener('click', () => { modalOverlay.style.display = 'none'; });
+            window.addEventListener('click', (event) => {
+                if (event.target == modalOverlay) { modalOverlay.style.display = 'none'; }
+            });
+            saveBtn.addEventListener('click', saveLatestSchedule);
+            loadBtn.addEventListener('click', loadLatestSchedule);
 
-        function truncateText(ctx, text, maxWidth) {
-            if (ctx.measureText(text).width <= maxWidth) {
-                return text;
-            }
-            
-            let truncated = text;
-            while (ctx.measureText(truncated + '...').width > maxWidth && truncated.length > 0) {
-                truncated = truncated.slice(0, -1);
-            }
-            return truncated + '...';
-        }
-		
-		function capitalizeWallNames(text) {
-			if (!text) return '';
-
-			// Split the full string by ", " to get each individual wall name
-			return text.split(', ').map(wallName => {
-				// Split each wall name by " " to get the words
-				return wallName.split(' ').map(word => {
-					// Capitalize the first letter of each word and add the rest
-					return word.charAt(0).toUpperCase() + word.slice(1);
-				}).join(' '); // Join the words back together with spaces
-			}).join(', '); // Join the wall names back together with ", "
-		}
-
-        function downloadImages() {
-            if (!window.generatedCanvases) return;
-
-            window.generatedCanvases.forEach(({ canvas, name }) => {
-                canvas.toBlob((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = name;
-                    a.click();
-                    URL.revokeObjectURL(url);
+            function handleFile(file) {
+                if (!file.name.endsWith('.csv')) {
+                    showMessage('Please upload a CSV file', 'error');
+                    return;
+                }
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: (results) => {
+                        csvData = results.data;
+                        showMessage(`CSV loaded successfully (${csvData.length} rows)`, 'info');
+                        checkReady();
+                    },
+                    error: (error) => { showMessage(`Error parsing CSV: ${error.message}`, 'error'); }
                 });
+            }
+
+            function checkReady() {
+                generateBtn.disabled = !(csvData && appState.selectedGym);
+            }
+
+            function showMessage(msg, type) {
+                messages.innerHTML = `<div class="${type}">${msg}</div>`;
+            }
+
+            function initializeState() {
+                appState.selectedGym = gymSelect.value;
+                checkReady();
+                updateLoadButtonState();
+            }
+
+            function getWallType(walls, gym) {
+                if (walls.length === 0 || !gymWalls[gym]) return null;
+                const firstWall = walls.find(w => gymWalls[gym][w]);
+                return firstWall ? gymWalls[gym][firstWall]?.type : null;
+            }
+
+            function generateSchedule() {
+                const gymCounts = {};
+                const gymCodes = Object.keys(gymNameMap);
+                csvData.forEach(row => {
+                    const location = (row['Location'] || '').trim();
+                    if (location) {
+                        for (const code of gymCodes) {
+                            if (location.includes(gymNameMap[code])) {
+                                gymCounts[code] = (gymCounts[code] || 0) + 1;
+                                break;
+                            }
+                        }
+                    }
+                });
+
+                let detectedGym = null;
+                if (Object.keys(gymCounts).length > 0) {
+                    detectedGym = Object.keys(gymCounts).sort((a, b) => gymCounts[b] - gymCounts[a])[0];
+                }
+
+                if (detectedGym && detectedGym !== appState.selectedGym) {
+                    const selectedGymFullName = gymNameMap[appState.selectedGym] || appState.selectedGym;
+                    const detectedGymFullName = gymNameMap[detectedGym] || detectedGym;
+                    const message = `${selectedGymFullName} was selected, but the CSV data appears to be for ${detectedGymFullName}.\n\nWould you like to switch to ${detectedGymFullName} and generate the schedule?`;
+
+                    if (confirm(message)) {
+                        gymSelect.value = detectedGym;
+                        appState.selectedGym = detectedGym;
+                        generateSchedule();
+                        return;
+                    } else {
+                        return;
+                    }
+                }
+
+                const scheduleByDate = {};
+                csvData.forEach((row, index) => {
+                    const date = row['Start Date'];
+                    const title = (row['Title'] || '').toLowerCase();
+                    const location = (row['Location'] || '').trim();
+                    if (!date || !title || !location.includes(gymNameMap[appState.selectedGym])) return;
+
+                    const skipTitles = ['admin', 'personal training', 'washing', 'forerunning', 'climb time', '@hill', '@design', '@plano', '@dtn', '@ftw'];
+                    if (skipTitles.some(skip => title.includes(skip))) {
+                        return;
+                    }
+
+                    const names = (row['Employee Names'] || '').split('/').map(n => n.trim()).filter(n => n);
+                    const setterCount = names.length;
+                    if (setterCount === 0) return;
+
+                    let walls = parseWalls(title, appState.selectedGym);
+
+                    if (!scheduleByDate[date]) {
+                        scheduleByDate[date] = { date: new Date(date), entries: [] };
+                    }
+
+                    if (walls.length > 0) {
+                        scheduleByDate[date].entries.push({ walls: walls, setterCount: setterCount });
+                    } else {
+                        let defaultType = null;
+                        if (title.includes('rope')) defaultType = 'rope';
+                        else if (title.includes('boulder')) defaultType = 'boulder';
+
+                        if (defaultType) {
+                             scheduleByDate[date].entries.push({ walls: [defaultType], isDefault: true, setterCount: setterCount });
+                        }
+                    }
+                });
+
+                const combinedData = Object.values(scheduleByDate).flatMap(day => {
+                    const ropes = day.entries.filter(e => e.isDefault ? e.walls.includes('rope') : getWallType(e.walls, appState.selectedGym) === 'rope');
+                    const boulders = day.entries.filter(e => e.isDefault ? e.walls.includes('boulder') : getWallType(e.walls, appState.selectedGym) === 'boulder');
+                    const dayEntries = [];
+
+                    if (ropes.length > 0) {
+                        const allRopeWalls = ropes.flatMap(e => e.walls);
+                        dayEntries.push({
+                            date: day.date,
+                            location: allRopeWalls.includes('rope') ? 'Ropes' : [...new Set(allRopeWalls)].join(', '),
+                            climbType: 'Slab',
+                            setterCount: ropes.reduce((sum, e) => sum + e.setterCount, 0),
+                            type: 'rope'
+                        });
+                    }
+                    if (boulders.length > 0) {
+                        const allBoulderWalls = boulders.flatMap(e => e.walls);
+                        dayEntries.push({
+                            date: day.date,
+                            location: allBoulderWalls.includes('boulder') ? 'Boulders' : [...new Set(allBoulderWalls)].join(', '),
+                            climbType: 'Slab',
+                            setterCount: boulders.reduce((sum, e) => sum + e.setterCount, 0),
+                            type: 'boulder'
+                        });
+                    }
+                    return dayEntries;
+                });
+
+                if (combinedData.length === 0) {
+                    showMessage('No valid setting schedule data found for the selected gym in this CSV.', 'error');
+                    return;
+                }
+
+                combinedData.sort((a, b) => a.date - b.date);
+                const startSunday = new Date(combinedData[0].date);
+                startSunday.setDate(startSunday.getDate() - startSunday.getDay());
+                const endSaturday = new Date(startSunday);
+                endSaturday.setDate(endSaturday.getDate() + 13);
+
+                appState.dateRange = `${formatDate(startSunday)}-${formatDate(endSaturday)}`;
+                window.scheduleStartSunday = startSunday;
+                appState.scheduleByDay = Array(14).fill(null).map(() => ({ routes: [], boulders: [] }));
+
+                combinedData.forEach(item => {
+                    const daysSinceStart = Math.floor((item.date - startSunday) / (1000 * 60 * 60 * 24));
+                    if (daysSinceStart >= 0 && daysSinceStart < 14) {
+                        const target = item.type === 'rope' ? appState.scheduleByDay[daysSinceStart].routes : appState.scheduleByDay[daysSinceStart].boulders;
+                        target.push({ ...item, dateStr: formatDate(item.date) });
+                    }
+                });
+
+                renderApp();
+            }
+
+            async function renderApp() {
+                const scrollX = window.scrollX;
+                const scrollY = window.scrollY;
+
+                preview.innerHTML = '';
+                appState.clickableRegions = [];
+                downloadBtn.disabled = true;
+                printBtn.disabled = true;
+                saveBtn.disabled = true;
+
+                if (appState.scheduleByDay.length === 0) {
+                    window.scrollTo(scrollX, scrollY);
+                    return;
+                }
+
+                const hasRoutes = appState.scheduleByDay.some(day => day.routes.length > 0);
+                const hasBoulders = appState.scheduleByDay.some(day => day.boulders.length > 0);
+
+                if (!hasRoutes && !hasBoulders) {
+                    showMessage('No schedule data found for selected gym', 'error');
+                    window.scrollTo(scrollX, scrollY);
+                    return;
+                }
+
+                // --- IMPROVEMENT: Cleaner canvas handling ---
+                const canvases = await renderToCanvas(appState.scheduleByDay, appState.dateRange, hasRoutes, hasBoulders);
+                window.generatedCanvases = canvases; // Still set for downloadImages function
+
+                canvases.forEach(({ canvas, name }) => {
+                    const container = document.createElement('div');
+                    container.style.marginBottom = '20px';
+                    canvas.style.maxWidth = '100%';
+                    canvas.style.height = 'auto';
+                    canvas.style.border = '1px solid #ddd';
+                    container.appendChild(canvas);
+                    preview.appendChild(container);
+                });
+
+                preview.style.display = 'block';
+                downloadBtn.disabled = false;
+                printBtn.disabled = false;
+                saveBtn.disabled = false;
+                showMessage('Schedule updated successfully!', 'info');
+                window.scrollTo(scrollX, scrollY);
+            }
+
+            async function renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders) {
+                const canvases = [];
+                if (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') {
+                    if (hasRoutes || hasBoulders) {
+                        const canvas = await renderPage('routes', scheduleByDay, dateRange);
+                        canvases.push({ canvas, name: `${appState.selectedGym}_schedule.png` });
+                    }
+                } else if (appState.selectedGym === 'HIL' || appState.selectedGym === 'DTN' || appState.selectedGym === 'FTW') {
+                    if (hasBoulders) {
+                        const canvas = await renderPage('boulders', scheduleByDay, dateRange);
+                        canvases.push({ canvas, name: `${appState.selectedGym}_boulders_schedule.png` });
+                    }
+                } else {
+                    if (hasRoutes) {
+                        const canvas = await renderPage('routes', scheduleByDay, dateRange);
+                        canvases.push({ canvas, name: `${appState.selectedGym}_routes_schedule.png` });
+                    }
+                    if (hasBoulders) {
+                        const canvas = await renderPage('boulders', scheduleByDay, dateRange);
+                        canvases.push({ canvas, name: `${appState.selectedGym}_boulders_schedule.png` });
+                    }
+                }
+                return canvases;
+            }
+
+            async function renderPage(type, scheduleByDay, dateRange) {
+                return new Promise((resolve, reject) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 791;
+                    canvas.height = 1024;
+                    const ctx = canvas.getContext('2d');
+
+                    let templateFile;
+                    if (appState.selectedGym === 'GVN') {
+                        templateFile = `templates/${appState.selectedGym}_routes.png`;
+                    } else if (appState.selectedGym === 'HIL' || appState.selectedGym === 'DTN' || appState.selectedGym === 'FTW') {
+                        templateFile = `templates/${appState.selectedGym}_boulders.png`;
+                    } else {
+                        templateFile = `templates/${appState.selectedGym}_${type}.png`;
+                    }
+
+                    const img = new Image();
+                    img.onload = () => {
+                        ctx.drawImage(img, 0, 0, 791, 1024);
+                        const gymCoords = templateCoords[appState.selectedGym];
+                        if (!gymCoords) { resolve(canvas); return; }
+
+                        const coords = (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') ? gymCoords['combined'] : gymCoords[type];
+                        if (!coords) { resolve(canvas); return; }
+
+                        if (coords.header) {
+                            ctx.font = 'bold 24px Montserrat, Arial, sans-serif';
+                            ctx.fillStyle = '#1e3a5f';
+                            ctx.textAlign = 'right';
+                            ctx.fillText(dateRange, coords.header.x, coords.header.y);
+                            ctx.textAlign = 'left';
+                        }
+
+                        ctx.fillStyle = '#1e3a5f';
+                        ctx.font = '14px Montserrat, Arial, sans-serif';
+                        ctx.textBaseline = 'middle';
+
+                        renderTableData(ctx, scheduleByDay.slice(0, 7), type, coords.leftTable, coords.tableTop, coords.rowHeight, 0);
+                        renderTableData(ctx, scheduleByDay.slice(7, 14), type, coords.rightTable, coords.tableTop, coords.rowHeight, 7);
+                        resolve(canvas);
+                    };
+                    img.onerror = reject;
+                    img.src = templateFile;
+                });
+            }
+
+            function renderTableData(ctx, weekData, type, tableCoords, tableTop, rowHeight, weekOffset) {
+                const startSunday = window.scheduleStartSunday;
+                weekData.forEach((day, rowIndex) => {
+                    const y = tableTop + (rowIndex * rowHeight);
+                    const dayIndex = weekOffset + rowIndex;
+
+                    // --- BUG FIX: Use appState.selectedGym instead of undefined selectedGym ---
+                    let items = (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN')
+                        ? (day.routes || []).concat(day.boulders || [])
+                        : (day[type] || []);
+
+                    const currentDate = new Date(startSunday);
+                    currentDate.setDate(currentDate.getDate() + dayIndex);
+                    const dateStr = formatDate(currentDate);
+
+                    const locationText = items.length > 0 ? capitalizeWallNames(items.map(i => i.location).join(', ')) : '-';
+                    const climbTypeText = items.length > 0 ? items[0].climbType : '-';
+                    const setterCountText = items.length > 0 ? String(items.reduce((total, item) => total + item.setterCount, 0)) : '-';
+
+                    ctx.fillText(dateStr, tableCoords.date.x, y);
+                    ctx.fillText(truncateText(ctx, locationText, tableCoords.location.width), tableCoords.location.x, y);
+                    ctx.fillText(climbTypeText, tableCoords.climbType.x, y);
+                    ctx.fillText(setterCountText, tableCoords.setters.x, y);
+
+                    const textY = y - (rowHeight / 2);
+                    const textHeight = rowHeight;
+                    const canvasType = (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') ? 'combined' : type;
+
+                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'location', value: locationText, x: tableCoords.location.x, y: textY, width: tableCoords.location.width, height: textHeight, canvasType });
+                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'climbType', value: climbTypeText, x: tableCoords.climbType.x, y: textY, width: tableCoords.climbType.width, height: textHeight, canvasType });
+                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'setterCount', value: setterCountText, x: tableCoords.setters.x, y: textY, width: tableCoords.setters.width, height: textHeight, canvasType });
+                });
+            }
+
+            preview.addEventListener('click', function(e) {
+                // Only proceed if the click is on a canvas and no editor is active
+                if (document.getElementById('canvas-editor') || e.target.tagName !== 'CANVAS') return;
+
+                const canvas = e.target;
+                const rect = canvas.getBoundingClientRect();
+
+                // Calculate scale factors to match click to canvas resolution
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX;
+                const y = (e.clientY - rect.top) * scaleY;
+
+                for (const region of appState.clickableRegions) {
+                    // Check if click is within the region's bounding box
+                    if (x > region.x && x < region.x + region.width && y > region.y && y < region.y + region.height) {
+                        showEditor(region, canvas);
+                        return;
+                    }
+                }
             });
-        }
-		initializeState();
-	});	
+
+            function showEditor(region, canvas) {
+                let editorElement;
+                const climbTypeOptions = ['Slab', 'Vert', 'Overhang', 'Steep'];
+
+                if (region.field === 'climbType') {
+                    editorElement = document.createElement('select');
+                    climbTypeOptions.forEach(optionText => {
+                        const option = document.createElement('option');
+                        option.value = optionText;
+                        option.textContent = optionText;
+                        if (optionText === region.value) option.selected = true;
+                        editorElement.appendChild(option);
+                    });
+                } else {
+                    editorElement = document.createElement('input');
+                    editorElement.type = region.field === 'setterCount' ? 'number' : 'text';
+                    editorElement.value = region.value === '-' ? '' : region.value;
+                }
+
+                editorElement.id = 'canvas-editor';
+                const canvasRect = canvas.getBoundingClientRect();
+                const scaleX = canvasRect.width / canvas.width;
+                const scaleY = canvasRect.height / canvas.height;
+                document.body.appendChild(editorElement);
+                editorElement.style.position = 'absolute';
+                editorElement.style.left = `${window.scrollX + canvasRect.left + (region.x * scaleX)}px`;
+                editorElement.style.top = `${window.scrollY + canvasRect.top + (region.y * scaleY)}px`;
+                editorElement.style.width = `${region.width * scaleX}px`;
+                editorElement.style.height = `${region.height * scaleY}px`;
+                editorElement.style.font = `${14 * scaleY}px Montserrat, Arial, sans-serif`;
+                editorElement.style.border = '2px solid #4db8a8';
+                editorElement.style.boxSizing = 'border-box';
+                editorElement.focus();
+                if (editorElement.tagName === 'INPUT') editorElement.select();
+
+                const handleUpdate = () => {
+                    updateScheduleData(region, editorElement.value);
+                    if(editorElement.parentNode) document.body.removeChild(editorElement);
+                };
+
+                editorElement.addEventListener('blur', handleUpdate, { once: true });
+                editorElement.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') editorElement.blur();
+                    else if (e.key === 'Escape') if(editorElement.parentNode) document.body.removeChild(editorElement);
+                });
+                if (editorElement.tagName === 'SELECT') editorElement.addEventListener('change', handleUpdate, { once: true });
+            }
+
+            function updateScheduleData(region, newValue) {
+                const dayData = appState.scheduleByDay[region.dayIndex];
+                let targetArray = dayData[region.dataType];
+                if (newValue === region.value) return;
+
+                if (targetArray.length > 0) {
+                    const entry = targetArray[0];
+                    if (region.field === 'setterCount') {
+                        entry[region.field] = Math.max(0, parseInt(newValue, 10) || 0);
+                    } else {
+                        entry[region.field] = newValue;
+                    }
+                    if (region.field === 'location' && !newValue) dayData[region.dataType] = [];
+                } else if (newValue && newValue !== '-' && newValue !== '0') {
+                    const newEntry = {
+                        date: new Date(window.scheduleStartSunday.getTime() + region.dayIndex * 24 * 60 * 60 * 1000),
+                        dateStr: formatDate(new Date(window.scheduleStartSunday.getTime() + region.dayIndex * 24 * 60 * 60 * 1000)),
+                        location: 'New Set',
+                        climbType: 'Slab',
+                        setterCount: 1
+                    };
+                    if (region.field === 'setterCount') {
+                        newEntry[region.field] = Math.max(1, parseInt(newValue, 10) || 1);
+                    } else {
+                        newEntry[region.field] = newValue;
+                    }
+                    targetArray.push(newEntry);
+                }
+                renderApp();
+            }
+
+            function saveLatestSchedule() {
+                if (!appState.selectedGym || appState.scheduleByDay.length === 0) {
+                     showMessage('Nothing generated to save.', 'error');
+                     return;
+                }
+                const key = `latest_schedule_${appState.selectedGym}`;
+                const dataToSave = {
+                    scheduleByDay: appState.scheduleByDay,
+                    dateRange: appState.dateRange,
+                    scheduleStartSunday: window.scheduleStartSunday.toISOString()
+                };
+                localStorage.setItem(key, JSON.stringify(dataToSave));
+                showMessage(`${gymNameMap[appState.selectedGym] || appState.selectedGym} schedule saved to this browser!`, 'info');
+                updateLoadButtonState();
+            }
+
+            function loadLatestSchedule() {
+                if (!appState.selectedGym) return;
+                const key = `latest_schedule_${appState.selectedGym}`;
+                const savedData = localStorage.getItem(key);
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    appState.scheduleByDay = parsedData.scheduleByDay;
+                    appState.dateRange = parsedData.dateRange;
+                    window.scheduleStartSunday = new Date(parsedData.scheduleStartSunday);
+                    renderApp();
+                } else {
+                    showMessage(`No saved schedule found for ${gymNameMap[appState.selectedGym] || appState.selectedGym}.`, 'error');
+                }
+            }
+
+            function updateLoadButtonState() {
+                if (!appState.selectedGym) {
+                    loadBtn.disabled = true;
+                    return;
+                }
+                const key = `latest_schedule_${appState.selectedGym}`;
+                loadBtn.disabled = !localStorage.getItem(key);
+            }
+
+            function expandWallRanges(titleStr) {
+                const namedRangeRegex = /([a-zA-Z]+)(\d+)-([a-zA-Z]+)(\d+)/g;
+                const simpleRangeRegex = /([a-zA-Z]+)(\d+)-(\d+)/g;
+                let expandedStr = titleStr;
+                expandedStr = expandedStr.replace(namedRangeRegex, (match, prefix1, startStr, prefix2, endStr) => {
+                    if (prefix1 !== prefix2) return match;
+                    const start = parseInt(startStr);
+                    const end = parseInt(endStr);
+                    const min = Math.min(start, end);
+                    const max = Math.max(start, end);
+                    const expanded = [];
+                    for (let i = min; i <= max; i++) expanded.push(prefix1 + i);
+                    return expanded.join(', ');
+                });
+                expandedStr = expandedStr.replace(simpleRangeRegex, (match, prefix, startStr, endStr) => {
+                    const start = parseInt(startStr);
+                    const end = parseInt(endStr);
+                    const expanded = [];
+                    for (let i = start; i <= end; i++) expanded.push(prefix + i);
+                    return expanded.join(', ');
+                });
+                return expandedStr;
+            }
+
+            function parseWalls(titleStr, gym) {
+                if (!titleStr || !gymWalls[gym]) return [];
+                const currentGymWalls = gymWalls[gym];
+                const expandedTitle = expandWallRanges(titleStr);
+                let cleanTitle = expandedTitle.toLowerCase().replace('jcca - ', '');
+                const parts = cleanTitle.replace(/\./g, '').split(/[,\/\s+]+/g).filter(s => s);
+                const walls = [];
+                let buffer = [];
+                for (const part of parts) {
+                    buffer.push(part);
+                    const potentialWall = buffer.join(' ');
+                    if (currentGymWalls[potentialWall]) {
+                        walls.push(potentialWall);
+                        buffer = [];
+                    }
+                }
+                for(const part of buffer){
+                    if(currentGymWalls[part]) walls.push(part);
+                }
+                return [...new Set(walls)];
+            }
+
+            function formatDate(date) {
+                const d = new Date(date);
+                const month = d.getMonth() + 1;
+                const day = d.getDate();
+                return `${month}/${day}`;
+            }
+
+            function truncateText(ctx, text, maxWidth) {
+                if (ctx.measureText(text).width <= maxWidth) return text;
+                let truncated = text;
+                while (ctx.measureText(truncated + '...').width > maxWidth && truncated.length > 0) {
+                    truncated = truncated.slice(0, -1);
+                }
+                return truncated + '...';
+            }
+
+            function capitalizeWallNames(text) {
+                if (!text) return '';
+                return text.split(', ').map(wallName => {
+                    return wallName.split(' ').map(word => {
+                        return word.charAt(0).toUpperCase() + word.slice(1);
+                    }).join(' ');
+                }).join(', ');
+            }
+
+            function downloadImages() {
+                if (!window.generatedCanvases) return;
+                window.generatedCanvases.forEach(({ canvas, name }) => {
+                    canvas.toBlob((blob) => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = name;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    });
+                });
+            }
+
+            initializeState();
+        });
     </script>
-<!-- ======================= -->
-<!--     INSTRUCTIONS MODAL    -->
-<!-- ======================= -->
-<div id="help-modal-overlay" class="modal-overlay">
-    <div class="modal-content">
-        <span id="modal-close-btn" class="modal-close">&times;</span>
-        <h2>How to Use the Schedule Generator</h2>
-        <ol>
-            <li>
-                <strong>Export from Humanity:</strong> In Humanity, go to the "Schedule" tab and export the desired two-week period as a CSV file. (Tools > Export Schedule)
-            </li>
-            <li>
-                <strong>Select Gym:</strong> Choose your gym location from the dropdown menu.
-            </li>
-            <li>
-                <strong>Upload CSV:</strong> Drag and drop the exported CSV file onto the upload area, or click to browse and select it.
-            </li>
-            <li>
-                <strong>Generate:</strong> Click the "Generate Schedule" button. The tool will process the file and display a preview of the schedule image(s).
-            </li>
-            <li>
-                <strong>Download or Print:</strong>
-                <ul>
-                    <li>Click <strong>"Download Image"</strong> to save the schedule(s) as PNG files, perfect for posting online and using in emails.</li>
-                    <li>Click <strong>"Print / Save PDF"</strong> to open a print-friendly version, which you can print directly or save as a clean PDF for in-gym display.</li>
-                </ul>
-            </li>
-        </ol>
-        <p style="font-size: 12px; color: #666; margin-top: 20px;">
-            <strong>Troubleshooting:</strong> If the wrong gym is detected, the tool will ask you to confirm before proceeding. If schedule data seems to be missing, ensure the 'Title' column in the CSV contains valid wall names.
-        </p>
+    <!-- ======================= -->
+    <!--     INSTRUCTIONS MODAL    -->
+    <!-- ======================= -->
+    <div id="help-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <span id="modal-close-btn" class="modal-close">&times;</span>
+            <h2>How to Use the Schedule Generator</h2>
+
+            <h4>Primary Workflow (Starting from a CSV)</h4>
+            <ol>
+                <li>
+                    <strong>Export from Humanity:</strong> Export the desired two-week period as a CSV file from the Humanity "Schedule" tab (Tools > Export Schedule).
+                </li>
+                <li>
+                    <strong>Select Gym:</strong> Choose your gym location from the dropdown menu.
+                </li>
+                <li>
+                    <strong>Upload CSV:</strong> Drag and drop the CSV file onto the upload area.
+                </li>
+                <li>
+                    <strong>Generate:</strong> Click "Generate Schedule" to create the visual preview.
+                </li>
+                <li>
+                    <strong>Edit Directly (New!):</strong> The generated preview is interactive! Click directly on any text for location, climb type, or setter count to make quick changes. Press Enter or click away to save your edit.
+                </li>
+                <li>
+                    <strong>Download or Print:</strong> Once you are happy with the schedule, use the "Download Image" or "Print / Save PDF" buttons to export your final copy.
+                </li>
+            </ol>
+
+            <h4 style="margin-top: 30px;">Quick Edits (Saving & Loading)</h4>
+            <p>For making fast changes without needing a new CSV:</p>
+            <ul>
+                <li><strong>Save Your Work:</strong> After generating or editing a schedule, click <strong>"Save as Latest"</strong>. This stores the current schedule in your browser, specifically for the gym you have selected.</li>
+                <li><strong>Load Your Work:</strong> The next time you visit, simply select the gym and click <strong>"Load Latest"</strong>. Your saved schedule will instantly appear, ready for more edits. The "Load Latest" button will only be active if a saved schedule exists for that gym.</li>
+            </ul>
+
+            <p style="font-size: 12px; color: #666; margin-top: 20px;">
+                <strong>Note:</strong> Saved schedules are stored in your web browser's local storage, not in the cloud. They are only accessible on the same computer and browser you used to save them.
+            </p>
+        </div>
     </div>
-</div>
 </body>
 </html>

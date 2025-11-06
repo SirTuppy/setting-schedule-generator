@@ -1,4 +1,4 @@
-const templateCoords = {
+ templateCoords = {
     // DSN: Separate Routes and Boulders pages
     'DSN': {
         'routes': {
