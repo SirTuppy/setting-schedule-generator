@@ -442,252 +442,276 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Setting Schedule Generator</h1>
-        
-        <div class="controls">
-            <div class="control-group">
-                <label for="gym-select">Select Gym Location</label>
-                <select id="gym-select">
-                    <option value="">-- Choose Gym --</option>
-                    <option value="DSN">Design (DSN)</option>
-                    <option value="PLN">Plano (PLN)</option>
-                    <option value="DTN">Denton (DTN)</option>
-                    <option value="FTW">Fort Worth (FTW)</option>
-                    <option value="GVN">Grapevine (GVN)</option>
-                    <option value="HIL">The Hill (HIL)</option>
-                </select>
-            </div>
+<div class="container">
+    <h1>Setting Schedule Generator</h1>
+
+    <div class="controls">
+        <div class="control-group">
+            <label for="gym-select">Select Gym Location</label>
+            <select id="gym-select">
+                <option value="">-- Choose Gym --</option>
+                <option value="DSN">Design (DSN)</option>
+                <option value="PLN">Plano (PLN)</option>
+                <option value="DTN">Denton (DTN)</option>
+                <option value="FTW">Fort Worth (FTW)</option>
+                <option value="GVN">Grapevine (GVN)</option>
+                <option value="HIL">The Hill (HIL)</option>
+            </select>
         </div>
-
-        <div class="upload-area" id="upload-area">
-            <p style="margin-bottom: 10px; font-weight: 600; color: #1e3a5f;">Upload Humanity CSV</p>
-            <p style="font-size: 14px; color: #666;">Drag & drop or click to browse</p>
-            <input type="file" id="csv-input" accept=".csv" style="display: none;">
-        </div>
-
-        <!-- ======================= -->
-        <!--     BUTTONS SECTION       -->
-        <!-- ======================= -->
-        <div class="buttons">
-            <!-- Main Actions Group -->
-            <div class="button-group-main">
-                <button class="btn-primary" id="generate-btn" disabled>
-                    <!-- Generate Icon (Optional, can be a checkmark or similar) -->
-                    <span>Generate Schedule</span>
-                </button>
-                <button class="btn-secondary" id="download-btn" disabled>
-                    <!-- Download SVG Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    <span>Download Image</span>
-                </button>
-                <button class="btn-secondary" id="print-btn" disabled>
-                    <!-- Print SVG Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                    <span>Print / Save PDF</span>
-                </button>
-                <button class="btn-secondary" id="email-btn" disabled>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                    <span>Email Schedule</span>
-                </button>
-            </div>
-
-            <!-- Utility Actions Group -->
-            <div class="button-group-utility">
-                <button class="btn-utility" id="save-btn" disabled>
-                    <!-- Save SVG Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24"height="24"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                    <span>Save as Latest</span>
-                </button>
-                <button class="btn-utility" id="load-btn" disabled>
-                    <!-- Load SVG Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                    <span>Load Latest</span>
-                </button>
-                <button class="btn-utility" id="help-btn">
-                    <!-- Help SVG Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                    <span>Instructions</span>
-                </button>
-                <button class="btn-utility" id="settings-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    <span>Email Settings</span>
-                </button>
-            </div>
-        </div>
-
-        <div id="messages"></div>
-        <div id="preview"></div>
     </div>
 
-    <script src="walls.js"></script>
-    <script src="config.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let csvData = null;
+    <div class="upload-area" id="upload-area">
+        <p style="margin-bottom: 10px; font-weight: 600; color: #1e3a5f;">Upload Humanity CSV</p>
+        <p style="font-size: 14px; color: #666;">Drag & drop or click to browse</p>
+        <input type="file" id="csv-input" accept=".csv" style="display: none;">
+    </div>
 
-            const appState = {
-                scheduleByDay: [],
-                dateRange: '',
-                selectedGym: '',
-                clickableRegions: []
-            };
+    <!-- ======================= -->
+    <!--     BUTTONS SECTION       -->
+    <!-- ======================= -->
+    <div class="buttons">
+        <!-- Main Actions Group -->
+        <div class="button-group-main">
+            <button class="btn-primary" id="generate-btn" disabled>
+                <!-- Generate Icon (Optional, can be a checkmark or similar) -->
+                <span>Generate Schedule</span>
+            </button>
+            <button class="btn-secondary" id="download-btn" disabled>
+                <!-- Download SVG Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Download Image</span>
+            </button>
+            <button class="btn-secondary" id="print-btn" disabled>
+                <!-- Print SVG Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                <span>Print / Save PDF</span>
+            </button>
+            <button class="btn-secondary" id="email-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>Email Schedule</span>
+            </button>
+        </div>
 
-            const gymNameMap = {
-                'DSN': 'Design',
-                'PLN': 'Plano',
-                'DTN': 'Denton',
-                'FTW': 'Fort Worth',
-                'GVN': 'Grapevine',
-                'HIL': 'Dallas Hill'
-            };
+        <!-- Utility Actions Group -->
+        <div class="button-group-utility">
+            <button class="btn-utility" id="save-btn" disabled>
+                <!-- Save SVG Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24"height="24"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                <span>Save as Latest</span>
+            </button>
+            <button class="btn-utility" id="load-btn" disabled>
+                <!-- Load SVG Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                <span>Load Latest</span>
+            </button>
+            <button class="btn-utility" id="help-btn">
+                <!-- Help SVG Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <span>Instructions</span>
+            </button>
+            <button class="btn-utility" id="settings-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>Email Settings</span>
+            </button>
+        </div>
+    </div>
 
-            // --- MODIFIED: Add all new DOM element references ---
-            const uploadArea = document.getElementById('upload-area');
-            const csvInput = document.getElementById('csv-input');
-            const gymSelect = document.getElementById('gym-select');
-            const generateBtn = document.getElementById('generate-btn');
-            const downloadBtn = document.getElementById('download-btn');
-            const printBtn = document.getElementById('print-btn');
-            const emailBtn = document.getElementById('email-btn'); // New
-            const messages = document.getElementById('messages');
-            const preview = document.getElementById('preview');
-            const helpBtn = document.getElementById('help-btn');
-            const modalOverlay = document.getElementById('help-modal-overlay');
-            const modalCloseBtn = document.getElementById('modal-close-btn');
-            const saveBtn = document.getElementById('save-btn');
-            const loadBtn = document.getElementById('load-btn');
-            const settingsBtn = document.getElementById('settings-btn'); // New
+    <div id="messages"></div>
+    <div id="preview"></div>
+</div>
 
-            // New Settings Modal elements
-            const settingsModalOverlay = document.getElementById('settings-modal-overlay');
-            const settingsModalCloseBtn = document.getElementById('settings-modal-close-btn');
-            const saveSettingsBtn = document.getElementById('save-settings-btn');
-            const emailToInput = document.getElementById('email-to-input');
-            const emailCcInput = document.getElementById('email-cc-input');
-            const emailSubjectInput = document.getElementById('email-subject-input');
-            const emailBodyInput = document.getElementById('email-body-input');
+<script src="walls.js"></script>
+<script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let csvData = null;
 
-            // Event Listeners
-            uploadArea.addEventListener('click', () => csvInput.click());
-            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
-            uploadArea.addEventListener('dragleave', () => { uploadArea.classList.remove('dragover'); });
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                const file = e.dataTransfer.files[0];
-                if (file) handleFile(file);
-            });
-            csvInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) handleFile(file);
-            });
-            gymSelect.addEventListener('change', (e) => {
-                appState.selectedGym = e.target.value;
-                checkReady();
-                updateLoadButtonState();
-            });
-            generateBtn.addEventListener('click', generateSchedule);
-            downloadBtn.addEventListener('click', downloadImages);
-            printBtn.addEventListener('click', () => window.print());
-            helpBtn.addEventListener('click', () => { modalOverlay.style.display = 'block'; });
-            modalCloseBtn.addEventListener('click', () => { modalOverlay.style.display = 'none'; });
-            window.addEventListener('click', (event) => {
-                if (event.target == modalOverlay) { modalOverlay.style.display = 'none'; }
-            });
-            saveBtn.addEventListener('click', saveLatestSchedule);
-            loadBtn.addEventListener('click', loadLatestSchedule);
-            emailBtn.addEventListener('click', generateAndOpenEmail);
-            settingsBtn.addEventListener('click', () => { settingsModalOverlay.style.display = 'block'; });
-            settingsModalCloseBtn.addEventListener('click', () => { settingsModalOverlay.style.display = 'none'; });
-            window.addEventListener('click', (event) => {
-                if (event.target == modalOverlay) modalOverlay.style.display = 'none';
-                if (event.target == settingsModalOverlay) settingsModalOverlay.style.display = 'none'; // New
-            });
-            saveSettingsBtn.addEventListener('click', saveEmailSettings);
+        const appState = {
+            scheduleByDay: [],
+            dateRange: '',
+            selectedGym: '',
+            clickableRegions: []
+        };
 
-            function handleFile(file) {
-                if (!file.name.endsWith('.csv')) {
-                    showMessage('Please upload a CSV file', 'error');
-                    return;
-                }
-                Papa.parse(file, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: (results) => {
-                        csvData = results.data;
-                        showMessage(`CSV loaded successfully (${csvData.length} rows)`, 'info');
-                        checkReady();
-                    },
-                    error: (error) => { showMessage(`Error parsing CSV: ${error.message}`, 'error'); }
-                });
-            }
+        const gymNameMap = {
+            'DSN': 'Design',
+            'PLN': 'Plano',
+            'DTN': 'Denton',
+            'FTW': 'Fort Worth',
+            'GVN': 'Grapevine',
+            'HIL': 'Dallas Hill'
+        };
 
-            function checkReady() {
-                generateBtn.disabled = !(csvData && appState.selectedGym);
-            }
+        // --- MODIFIED: Add all new DOM element references ---
+        const uploadArea = document.getElementById('upload-area');
+        const csvInput = document.getElementById('csv-input');
+        const gymSelect = document.getElementById('gym-select');
+        const generateBtn = document.getElementById('generate-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const printBtn = document.getElementById('print-btn');
+        const emailBtn = document.getElementById('email-btn'); // New
+        const messages = document.getElementById('messages');
+        const preview = document.getElementById('preview');
+        const helpBtn = document.getElementById('help-btn');
+        const modalOverlay = document.getElementById('help-modal-overlay');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const loadBtn = document.getElementById('load-btn');
+        const settingsBtn = document.getElementById('settings-btn'); // New
 
-            function showMessage(msg, type) {
-                messages.innerHTML = `<div class="${type}">${msg}</div>`;
-            }
+        // New Settings Modal elements
+        const settingsModalOverlay = document.getElementById('settings-modal-overlay');
+        const settingsModalCloseBtn = document.getElementById('settings-modal-close-btn');
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+        const emailToInput = document.getElementById('email-to-input');
+        const emailCcInput = document.getElementById('email-cc-input');
+        const emailSubjectInput = document.getElementById('email-subject-input');
+        const emailBodyInput = document.getElementById('email-body-input');
 
-            function initializeState() {
-                appState.selectedGym = gymSelect.value;
-                checkReady();
-                updateLoadButtonState();
+        // Event Listeners
+        uploadArea.addEventListener('click', () => csvInput.click());
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+        uploadArea.addEventListener('dragleave', () => { uploadArea.classList.remove('dragover'); });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) handleFile(file);
+        });
+        csvInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFile(file);
+        });
+        gymSelect.addEventListener('change', (e) => {
+            appState.selectedGym = e.target.value;
+            checkReady();
+            updateLoadButtonState();
+        });
+        generateBtn.addEventListener('click', generateSchedule);
+        downloadBtn.addEventListener('click', downloadImages);
+        printBtn.addEventListener('click', () => window.print());
+        helpBtn.addEventListener('click', () => { modalOverlay.style.display = 'block'; });
+        modalCloseBtn.addEventListener('click', () => { modalOverlay.style.display = 'none'; });
+        window.addEventListener('click', (event) => {
+            if (event.target == modalOverlay) { modalOverlay.style.display = 'none'; }
+        });
+        saveBtn.addEventListener('click', saveLatestSchedule);
+        loadBtn.addEventListener('click', loadLatestSchedule);
+        emailBtn.addEventListener('click', generateAndOpenEmail);
+        settingsBtn.addEventListener('click', () => {
+                // Always load the saved templates first. This is crucial to ensure we start
+                // with the placeholders before attempting to replace them.
                 loadEmailSettings();
+
+                // Now, if a schedule is active, fill in the placeholders for a better user experience.
+                if (appState.selectedGym && appState.dateRange) {
+                    const gymFullName = gymNameMap[appState.selectedGym] || appState.selectedGym;
+
+                    const subjectTemplate = emailSubjectInput.value;
+                    const bodyTemplate = emailBodyInput.value;
+
+                    // Use a regular expression with the 'g' flag to replace all instances
+                    emailSubjectInput.value = subjectTemplate
+                        .replace(/\[GYM_NAME\]/g, gymFullName)
+                        .replace(/\[DATE_RANGE\]/g, appState.dateRange);
+
+                    emailBodyInput.value = bodyTemplate
+                        .replace(/\[GYM_NAME\]/g, gymFullName)
+                        .replace(/\[DATE_RANGE\]/g, appState.dateRange);
+                }
+
+                // Finally, show the modal.
+                settingsModalOverlay.style.display = 'block';
+            });
+        settingsModalCloseBtn.addEventListener('click', () => { settingsModalOverlay.style.display = 'none'; });
+        window.addEventListener('click', (event) => {
+            if (event.target == modalOverlay) modalOverlay.style.display = 'none';
+            if (event.target == settingsModalOverlay) settingsModalOverlay.style.display = 'none'; // New
+        });
+        saveSettingsBtn.addEventListener('click', saveEmailSettings);
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.csv')) {
+                showMessage('Please upload a CSV file', 'error');
+                return;
             }
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    csvData = results.data;
+                    showMessage(`CSV loaded successfully (${csvData.length} rows)`, 'info');
+                    checkReady();
+                },
+                error: (error) => { showMessage(`Error parsing CSV: ${error.message}`, 'error'); }
+            });
+        }
 
-            function getWallType(walls, gym) {
-                // --- IMPROVEMENT: Handle generic 'ropes' or 'boulders' text explicitly ---
-                if (walls.includes('ropes')) return 'rope';
-                if (walls.includes('boulders')) return 'boulder';
+        function checkReady() {
+            generateBtn.disabled = !(csvData && appState.selectedGym);
+        }
 
-                if (walls.length === 0 || !gymWalls[gym]) return null;
-                const firstWall = walls.find(w => gymWalls[gym][w]);
-                return firstWall ? gymWalls[gym][firstWall]?.type : null;
-            }
+        function showMessage(msg, type) {
+            messages.innerHTML = `<div class="${type}">${msg}</div>`;
+        }
 
-            function generateSchedule() {
-                const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+        function initializeState() {
+            appState.selectedGym = gymSelect.value;
+            checkReady();
+            updateLoadButtonState();
+            loadEmailSettings();
+        }
 
-                // ... (gym detection logic remains the same) ...
-                const gymCounts = {};
-                const gymCodes = Object.keys(gymNameMap);
-                csvData.forEach(row => {
-                    const location = (row['Location'] || '').trim();
-                    if (location) {
-                        for (const code of gymCodes) {
-                            if (location.includes(gymNameMap[code])) {
-                                gymCounts[code] = (gymCounts[code] || 0) + 1;
-                                break;
-                            }
+        function getWallType(walls, gym) {
+            // --- IMPROVEMENT: Handle generic 'ropes' or 'boulders' text explicitly ---
+            if (walls.includes('ropes')) return 'rope';
+            if (walls.includes('boulders')) return 'boulder';
+
+            if (walls.length === 0 || !gymWalls[gym]) return null;
+            const firstWall = walls.find(w => gymWalls[gym][w]);
+            return firstWall ? gymWalls[gym][firstWall]?.type : null;
+        }
+
+        function generateSchedule() {
+            const generateUniqueId = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+            // ... (gym detection logic remains the same) ...
+            const gymCounts = {};
+            const gymCodes = Object.keys(gymNameMap);
+            csvData.forEach(row => {
+                const location = (row['Location'] || '').trim();
+                if (location) {
+                    for (const code of gymCodes) {
+                        if (location.includes(gymNameMap[code])) {
+                            gymCounts[code] = (gymCounts[code] || 0) + 1;
+                            break;
                         }
                     }
-                });
-
-                let detectedGym = null;
-                if (Object.keys(gymCounts).length > 0) {
-                    detectedGym = Object.keys(gymCounts).sort((a, b) => gymCounts[b] - gymCounts[a])[0];
                 }
+            });
 
-                if (detectedGym && detectedGym !== appState.selectedGym) {
-                    const selectedGymFullName = gymNameMap[appState.selectedGym] || appState.selectedGym;
-                    const detectedGymFullName = gymNameMap[detectedGym] || detectedGym;
-                    const message = `${selectedGymFullName} was selected, but the CSV data appears to be for ${detectedGymFullName}.\n\nWould you like to switch to ${detectedGymFullName} and generate the schedule?`;
+            let detectedGym = null;
+            if (Object.keys(gymCounts).length > 0) {
+                detectedGym = Object.keys(gymCounts).sort((a, b) => gymCounts[b] - gymCounts[a])[0];
+            }
 
-                    if (confirm(message)) {
-                        gymSelect.value = detectedGym;
-                        appState.selectedGym = detectedGym;
-                        generateSchedule();
-                        return;
-                    } else {
-                        return;
-                    }
+            if (detectedGym && detectedGym !== appState.selectedGym) {
+                const selectedGymFullName = gymNameMap[appState.selectedGym] || appState.selectedGym;
+                const detectedGymFullName = gymNameMap[detectedGym] || detectedGym;
+                const message = `${selectedGymFullName} was selected, but the CSV data appears to be for ${detectedGymFullName}.\n\nWould you like to switch to ${detectedGymFullName} and generate the schedule?`;
+
+                if (confirm(message)) {
+                    gymSelect.value = detectedGym;
+                    appState.selectedGym = detectedGym;
+                    generateSchedule();
+                    return;
+                } else {
+                    return;
                 }
+            }
 
-                const scheduleByDate = {};
+            const scheduleByDate = {};
                 csvData.forEach((row, index) => {
                     const date = row['Start Date'];
                     const title = (row['Title'] || '').toLowerCase();
@@ -695,14 +719,12 @@
                     if (!date || !title || !location.includes(gymNameMap[appState.selectedGym])) return;
 
                     const skipTitles = ['admin', 'personal training', 'washing', 'forerunning', 'climb time', '@hill', '@design', '@plano', '@dtn', '@ftw'];
-                    if (skipTitles.some(skip => title.includes(skip))) {
-                        return;
-                    }
+                    if (skipTitles.some(skip => title.includes(skip))) return;
 
                     const names = (row['Employee Names'] || '').split('/').map(n => n.trim()).filter(n => n);
                     const setterCount = names.length;
                     if (setterCount === 0) return;
-                    
+
                     let walls = parseWalls(title, appState.selectedGym);
                     if (walls.length === 0) {
                         if (title.includes('rope')) walls = ['ropes'];
@@ -713,34 +735,51 @@
                     if (!scheduleByDate[date]) {
                         scheduleByDate[date] = { date: new Date(date), entries: [] };
                     }
-                    
-                    scheduleByDate[date].entries.push({ 
-                        walls: walls, 
-                        setterCount: setterCount 
-                    });
+
+                    scheduleByDate[date].entries.push({ walls: walls, setterCount: setterCount });
                 });
-                
+
                 const allDates = Object.values(scheduleByDate).map(d => d.date).sort((a, b) => a - b);
                 if (allDates.length === 0) {
                     showMessage('No valid setting schedule data found for the selected gym in this CSV.', 'error');
                     return;
                 }
-                
-                const startSunday = new Date(allDates[0]);
-                startSunday.setDate(startSunday.getDate() - startSunday.getDay());
-                const endSaturday = new Date(startSunday);
-                endSaturday.setDate(endSaturday.getDate() + 13);
 
-                appState.dateRange = `${formatDate(startSunday)}-${formatDate(endSaturday)}`;
-                window.scheduleStartSunday = startSunday;
+                // --- CONFIGURATION-DRIVEN DATE CALCULATION ---
+                const gymConfig = templateCoords[appState.selectedGym];
+                const firstDate = allDates[0];
+                const startDay = new Date(firstDate);
+
+                if (gymConfig.weekStartDay === 'Monday') {
+                    // Adjust to the previous Monday
+                    const dayOfWeek = startDay.getDay(); // 0=Sun, 1=Mon, ...
+                    const adjustment = (dayOfWeek === 0) ? 6 : dayOfWeek - 1;
+                    startDay.setDate(startDay.getDate() - adjustment);
+                } else {
+                    // Default to Sunday start
+                    startDay.setDate(startDay.getDate() - startDay.getDay());
+                }
+
+                 // --- THE FIX: Calculate endDay based on gym configuration ---
+                const endDay = new Date(startDay);
+                if (gymConfig.weekStartDay === 'Monday') {
+                    // A Monday-start schedule ends on the second Friday (11 days after the first Monday)
+                    endDay.setDate(endDay.getDate() + 11);
+                } else {
+                    // A Sunday-start schedule ends on the second Saturday (13 days after the first Sunday)
+                    endDay.setDate(endDay.getDate() + 13);
+                }
+
+                appState.dateRange = `${formatDate(startDay)}-${formatDate(endDay)}`;
+                window.scheduleStartDay = startDay; // Use a more generic name
                 appState.scheduleByDay = Array(14).fill(null).map(() => ({ routes: [], boulders: [] }));
 
                 Object.values(scheduleByDate).forEach(day => {
-                    const daysSinceStart = Math.floor((day.date - startSunday) / (1000 * 60 * 60 * 24));
+                    const daysSinceStart = Math.floor((day.date - startDay) / (1000 * 60 * 60 * 24));
                     if (daysSinceStart >= 0 && daysSinceStart < 14) {
                         day.entries.forEach(entry => {
                             const type = getWallType(entry.walls, appState.selectedGym);
-                            if (!type) return; 
+                            if (!type) return;
 
                             const targetArray = (type === 'rope') ? appState.scheduleByDay[daysSinceStart].routes : appState.scheduleByDay[daysSinceStart].boulders;
 
@@ -748,7 +787,6 @@
                                 id: generateUniqueId(),
                                 walls: entry.walls,
                                 setterCount: entry.setterCount,
-                                // --- CHANGE: Default to 'Rope' or 'Boulder' as the stored type ---
                                 climbType: type.charAt(0).toUpperCase() + type.slice(1)
                             });
                         });
@@ -756,264 +794,323 @@
                 });
 
                 renderApp();
-            }
+        } //end generateSchedule
 
-            async function renderApp() {
-                const scrollX = window.scrollX;
-                const scrollY = window.scrollY;
+        async function renderApp() {
+            const scrollX = window.scrollX;
+            const scrollY = window.scrollY;
 
-                preview.innerHTML = '';
-                appState.clickableRegions = [];
-                downloadBtn.disabled = true;
-                printBtn.disabled = true;
-                saveBtn.disabled = true;
-                emailBtn.disabled = true;
+            preview.innerHTML = '';
+            appState.clickableRegions = [];
+            downloadBtn.disabled = true;
+            printBtn.disabled = true;
+            saveBtn.disabled = true;
+            emailBtn.disabled = true;
 
-                if (appState.scheduleByDay.length === 0) {
-                    window.scrollTo(scrollX, scrollY);
-                    return;
-                }
-
-                const hasRoutes = appState.scheduleByDay.some(day => day.routes.length > 0);
-                const hasBoulders = appState.scheduleByDay.some(day => day.boulders.length > 0);
-
-                if (!hasRoutes && !hasBoulders) {
-                    showMessage('No schedule data found for selected gym', 'error');
-                    window.scrollTo(scrollX, scrollY);
-                    return;
-                }
-
-                // --- IMPROVEMENT: Cleaner canvas handling ---
-                const canvases = await renderToCanvas(appState.scheduleByDay, appState.dateRange, hasRoutes, hasBoulders);
-                window.generatedCanvases = canvases; // Still set for downloadImages function
-
-                canvases.forEach(({ canvas, name }) => {
-                    const container = document.createElement('div');
-                    container.style.marginBottom = '20px';
-                    canvas.style.maxWidth = '100%';
-                    canvas.style.height = 'auto';
-                    canvas.style.border = '1px solid #ddd';
-                    container.appendChild(canvas);
-                    preview.appendChild(container);
-                });
-
-                preview.style.display = 'block';
-                downloadBtn.disabled = false;
-                printBtn.disabled = false;
-                saveBtn.disabled = false;
-                emailBtn.disabled = false; 
-
-                showMessage('Schedule updated successfully!', 'info');
+            if (appState.scheduleByDay.length === 0) {
                 window.scrollTo(scrollX, scrollY);
+                return;
             }
 
-            async function renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders) {
-                const canvases = [];
-                if (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') {
-                    if (hasRoutes || hasBoulders) {
-                        const canvas = await renderPage('routes', scheduleByDay, dateRange);
-                        canvases.push({ canvas, name: `${appState.selectedGym}_schedule.png` });
-                    }
-                } else if (appState.selectedGym === 'HIL' || appState.selectedGym === 'DTN' || appState.selectedGym === 'FTW') {
-                    if (hasBoulders) {
-                        const canvas = await renderPage('boulders', scheduleByDay, dateRange);
-                        canvases.push({ canvas, name: `${appState.selectedGym}_boulders_schedule.png` });
-                    }
-                } else {
-                    if (hasRoutes) {
-                        const canvas = await renderPage('routes', scheduleByDay, dateRange);
-                        canvases.push({ canvas, name: `${appState.selectedGym}_routes_schedule.png` });
-                    }
-                    if (hasBoulders) {
-                        const canvas = await renderPage('boulders', scheduleByDay, dateRange);
-                        canvases.push({ canvas, name: `${appState.selectedGym}_boulders_schedule.png` });
-                    }
+            const hasRoutes = appState.scheduleByDay.some(day => day.routes.length > 0);
+            const hasBoulders = appState.scheduleByDay.some(day => day.boulders.length > 0);
+
+            if (!hasRoutes && !hasBoulders) {
+                showMessage('No schedule data found for selected gym', 'error');
+                window.scrollTo(scrollX, scrollY);
+                return;
+            }
+
+            // --- IMPROVEMENT: Cleaner canvas handling ---
+            const canvases = await renderToCanvas(appState.scheduleByDay, appState.dateRange, hasRoutes, hasBoulders);
+            window.generatedCanvases = canvases; // Still set for downloadImages function
+
+            canvases.forEach(({ canvas, name }) => {
+                const container = document.createElement('div');
+                container.style.marginBottom = '20px';
+                canvas.style.maxWidth = '100%';
+                canvas.style.height = 'auto';
+                canvas.style.border = '1px solid #ddd';
+                container.appendChild(canvas);
+                preview.appendChild(container);
+            });
+
+            preview.style.display = 'block';
+            downloadBtn.disabled = false;
+            printBtn.disabled = false;
+            saveBtn.disabled = false;
+            emailBtn.disabled = false;
+
+            showMessage('Schedule updated successfully!', 'info');
+            window.scrollTo(scrollX, scrollY);
+        }
+
+        async function renderToCanvas(scheduleByDay, dateRange, hasRoutes, hasBoulders) {
+            const canvases = [];
+            if (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') {
+                if (hasRoutes || hasBoulders) {
+                    const canvas = await renderPage('routes', scheduleByDay, dateRange);
+                    canvases.push({ canvas, name: `${appState.selectedGym}_schedule.png` });
                 }
-                return canvases;
+            } else if (appState.selectedGym === 'HIL' || appState.selectedGym === 'DTN' || appState.selectedGym === 'FTW') {
+                if (hasBoulders) {
+                    const canvas = await renderPage('boulders', scheduleByDay, dateRange);
+                    canvases.push({ canvas, name: `${appState.selectedGym}_boulders_schedule.png` });
+                }
+            } else {
+                if (hasRoutes) {
+                    const canvas = await renderPage('routes', scheduleByDay, dateRange);
+                    canvases.push({ canvas, name: `${appState.selectedGym}_routes_schedule.png` });
+                }
+                if (hasBoulders) {
+                    const canvas = await renderPage('boulders', scheduleByDay, dateRange);
+                    canvases.push({ canvas, name: `${appState.selectedGym}_boulders_schedule.png` });
+                }
             }
+            return canvases;
+        }
 
-            async function renderPage(type, scheduleByDay, dateRange) {
-                return new Promise((resolve, reject) => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 791;
-                    canvas.height = 1024;
-                    const ctx = canvas.getContext('2d');
+        async function renderPage(type, scheduleByDay, dateRange) {
+            return new Promise((resolve, reject) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 791;
+                canvas.height = 1024;
+                const ctx = canvas.getContext('2d');
 
-                    let templateFile;
-                    if (appState.selectedGym === 'GVN') {
-                        templateFile = `templates/${appState.selectedGym}_routes.png`;
-                    } else if (appState.selectedGym === 'HIL' || appState.selectedGym === 'DTN' || appState.selectedGym === 'FTW') {
-                        templateFile = `templates/${appState.selectedGym}_boulders.png`;
-                    } else {
-                        templateFile = `templates/${appState.selectedGym}_${type}.png`;
+                let templateFile;
+                if (appState.selectedGym === 'GVN') {
+                    templateFile = `templates/${appState.selectedGym}_routes.png`;
+                } else if (appState.selectedGym === 'HIL' || appState.selectedGym === 'DTN' || appState.selectedGym === 'FTW') {
+                    templateFile = `templates/${appState.selectedGym}_boulders.png`;
+                } else {
+                    templateFile = `templates/${appState.selectedGym}_${type}.png`;
+                }
+
+                const img = new Image();
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, 791, 1024);
+                    const gymCoords = templateCoords[appState.selectedGym];
+                    if (!gymCoords) { resolve(canvas); return; }
+
+                    const coords = (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') ? gymCoords['combined'] : gymCoords[type];
+                    if (!coords) { resolve(canvas); return; }
+
+                    if (coords.header) {
+                        ctx.font = 'bold 24px Montserrat, Arial, sans-serif';
+                        ctx.fillStyle = '#1e3a5f';
+                        ctx.textAlign = 'right';
+                        ctx.fillText(dateRange, coords.header.x, coords.header.y);
+                        ctx.textAlign = 'left';
                     }
 
-                    const img = new Image();
-                    img.onload = () => {
-                        ctx.drawImage(img, 0, 0, 791, 1024);
-                        const gymCoords = templateCoords[appState.selectedGym];
-                        if (!gymCoords) { resolve(canvas); return; }
+                    ctx.fillStyle = '#1e3a5f';
+                    ctx.font = '14px Montserrat, Arial, sans-serif';
+                    ctx.textBaseline = 'middle';
 
-                        const coords = (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') ? gymCoords['combined'] : gymCoords[type];
-                        if (!coords) { resolve(canvas); return; }
+                    renderTableData(ctx, scheduleByDay.slice(0, 7), type, coords.leftTable, coords.tableTop, coords.rowHeight, 0);
+                    renderTableData(ctx, scheduleByDay.slice(7, 14), type, coords.rightTable, coords.tableTop, coords.rowHeight, 7);
+                    resolve(canvas);
+                };
+                img.onerror = reject;
+                img.src = templateFile;
+            });
+        }
 
-                        if (coords.header) {
-                            ctx.font = 'bold 24px Montserrat, Arial, sans-serif';
-                            ctx.fillStyle = '#1e3a5f';
-                            ctx.textAlign = 'right';
-                            ctx.fillText(dateRange, coords.header.x, coords.header.y);
-                            ctx.textAlign = 'left';
-                        }
+        function renderTableData(ctx, weekData, type, tableCoords, tableTop, rowHeight, weekOffset) {
+                const startDay = window.scheduleStartDay;
+                const gymConfig = templateCoords[appState.selectedGym];
+                let currentY = tableTop;
 
-                        ctx.fillStyle = '#1e3a5f';
-                        ctx.font = '14px Montserrat, Arial, sans-serif';
-                        ctx.textBaseline = 'middle';
-
-                        renderTableData(ctx, scheduleByDay.slice(0, 7), type, coords.leftTable, coords.tableTop, coords.rowHeight, 0);
-                        renderTableData(ctx, scheduleByDay.slice(7, 14), type, coords.rightTable, coords.tableTop, coords.rowHeight, 7);
-                        resolve(canvas);
-                    };
-                    img.onerror = reject;
-                    img.src = templateFile;
-                });
-            }
-
-            function renderTableData(ctx, weekData, type, tableCoords, tableTop, rowHeight, weekOffset) {
-                const startSunday = window.scheduleStartSunday;
                 weekData.forEach((day, rowIndex) => {
-                    const y = tableTop + (rowIndex * rowHeight);
                     const dayIndex = weekOffset + rowIndex;
-
-                    const currentDate = new Date(startSunday);
+                    const currentDate = new Date(startDay);
                     currentDate.setDate(currentDate.getDate() + dayIndex);
                     const dateStr = formatDate(currentDate);
+                    const dayOfWeek = currentDate.getDay();
 
-                    const itemsForLocation = (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN')
-                        ? (day.routes || []).concat(day.boulders || [])
-                        : (day[type] || []);
-                    
+                    if (gymConfig.displayMode === 'separate' && (dayOfWeek === 0 || dayOfWeek === 6)) {
+                        return;
+                    }
+
                     const hasRoutes = day.routes && day.routes.length > 0;
                     const hasBoulders = day.boulders && day.boulders.length > 0;
 
-                    let climbTypeText = '-';
-                    if (itemsForLocation.length > 0) {
-                        // --- NEW LOGIC: "Both" is the highest priority display type ---
-                        if ((appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') && hasRoutes && hasBoulders) {
-                            climbTypeText = 'Both';
-                        } else {
-                            // Otherwise, display the stored type of the first item.
-                            // This respects manual overrides like "Slab", "Vert", etc.
-                            climbTypeText = itemsForLocation[0].climbType;
+                    const itemsForDay = (day.routes || []).concat(day.boulders || []);
+
+                    // --- SEPARATE DISPLAY MODE (e.g., Grapevine Weekdays) ---
+                    if (gymConfig.displayMode === 'separate') {
+                        if (!hasRoutes && !hasBoulders) {
+                            const textY = currentY - (rowHeight / 2);
+                            ctx.fillText(dateStr, tableCoords.date.x, currentY);
+                            ctx.fillText('---', tableCoords.location.x, currentY);
+                            ctx.fillText('---', tableCoords.climbType.x, currentY);
+                            ctx.fillText('---', tableCoords.setters.x, currentY);
+                            appState.clickableRegions.push({ dayIndex, dataType: 'routes', field: 'location', value: '---', x: tableCoords.location.x, y: textY, width: tableCoords.location.width, height: rowHeight, canvasType: 'combined', id: null });
+                            appState.clickableRegions.push({ dayIndex, dataType: 'routes', field: 'climbType', value: '---', x: tableCoords.climbType.x, y: textY, width: tableCoords.climbType.width, height: rowHeight, canvasType: 'combined', id: null });
+                            appState.clickableRegions.push({ dayIndex, dataType: 'routes', field: 'setterCount', value: '---', x: tableCoords.setters.x, y: textY, width: tableCoords.setters.width, height: rowHeight, canvasType: 'combined', id: null });
+                            currentY += rowHeight;
+                            return;
                         }
+
+                        let dateDrawn = false;
+
+                        if (hasRoutes) {
+                            const routeTextY = currentY - (rowHeight / 2);
+                            const firstRoute = day.routes[0];
+                            const locationText = capitalizeWallNames(day.routes.map(i => i.walls.join(', ')).join(', '));
+                            const setterCountText = String(day.routes.reduce((total, item) => total + item.setterCount, 0));
+
+                            ctx.fillText(dateStr, tableCoords.date.x, currentY);
+                            ctx.fillText(truncateText(ctx, locationText, tableCoords.location.width), tableCoords.location.x, currentY);
+                            // --- FIX: Use the stored climbType from the first route entry ---
+                            ctx.fillText(firstRoute.climbType, tableCoords.climbType.x, currentY);
+                            ctx.fillText(setterCountText, tableCoords.setters.x, currentY);
+
+                            appState.clickableRegions.push({ dayIndex, dataType: 'routes', field: 'location', value: locationText, x: tableCoords.location.x, y: routeTextY, width: tableCoords.location.width, height: rowHeight, canvasType: 'combined', id: firstRoute.id });
+                            appState.clickableRegions.push({ dayIndex, dataType: 'routes', field: 'climbType', value: firstRoute.climbType, x: tableCoords.climbType.x, y: routeTextY, width: tableCoords.climbType.width, height: rowHeight, canvasType: 'combined', id: firstRoute.id });
+                            appState.clickableRegions.push({ dayIndex, dataType: 'routes', field: 'setterCount', value: setterCountText, x: tableCoords.setters.x, y: routeTextY, width: tableCoords.setters.width, height: rowHeight, canvasType: 'combined', id: firstRoute.id });
+
+                            currentY += rowHeight;
+                            dateDrawn = true;
+                        }
+
+                        if (hasBoulders) {
+                            const boulderTextY = currentY - (rowHeight / 2);
+                            const firstBoulder = day.boulders[0];
+                            const locationText = capitalizeWallNames(day.boulders.map(i => i.walls.join(', ')).join(', '));
+                            const setterCountText = String(day.boulders.reduce((total, item) => total + item.setterCount, 0));
+
+                            if (!dateDrawn) {
+                                ctx.fillText(dateStr, tableCoords.date.x, currentY);
+                            }
+                            ctx.fillText(truncateText(ctx, locationText, tableCoords.location.width), tableCoords.location.x, currentY);
+                             // --- FIX: Use the stored climbType from the first boulder entry ---
+                            ctx.fillText(firstBoulder.climbType, tableCoords.climbType.x, currentY);
+                            ctx.fillText(setterCountText, tableCoords.setters.x, currentY);
+
+                            appState.clickableRegions.push({ dayIndex, dataType: 'boulders', field: 'location', value: locationText, x: tableCoords.location.x, y: boulderTextY, width: tableCoords.location.width, height: rowHeight, canvasType: 'combined', id: firstBoulder.id });
+                            appState.clickableRegions.push({ dayIndex, dataType: 'boulders', field: 'climbType', value: firstBoulder.climbType, x: tableCoords.climbType.x, y: boulderTextY, width: tableCoords.climbType.width, height: rowHeight, canvasType: 'combined', id: firstBoulder.id });
+                            appState.clickableRegions.push({ dayIndex, dataType: 'boulders', field: 'setterCount', value: setterCountText, x: tableCoords.setters.x, y: boulderTextY, width: tableCoords.setters.width, height: rowHeight, canvasType: 'combined', id: firstBoulder.id });
+
+                            currentY += rowHeight;
+                        }
+
+                    } else { // --- MERGED DISPLAY MODE (All other gyms, including weekends) ---
+                        const textY = currentY - (rowHeight / 2);
+                        let climbTypeText = '---';
+                        if (itemsForDay.length > 0) {
+                            if (hasRoutes && hasBoulders) {
+                                climbTypeText = 'Both';
+                            } else {
+                                climbTypeText = itemsForDay[0].climbType;
+                            }
+                        }
+
+                        const locationText = itemsForDay.length > 0 ? capitalizeWallNames(itemsForDay.map(i => i.walls.join(', ')).join(', ')) : '---';
+                        const setterCountText = itemsForDay.length > 0 ? String(itemsForDay.reduce((total, item) => total + item.setterCount, 0)) : '---';
+
+                        ctx.fillText(dateStr, tableCoords.date.x, currentY);
+                        ctx.fillText(truncateText(ctx, locationText, tableCoords.location.width), tableCoords.location.x, currentY);
+                        ctx.fillText(climbTypeText, tableCoords.climbType.x, currentY);
+                        ctx.fillText(setterCountText, tableCoords.setters.x, currentY);
+
+                        const firstItem = itemsForDay.length > 0 ? itemsForDay[0] : null;
+                        const firstItemId = firstItem ? firstItem.id : null;
+                        const actualClimbType = firstItem ? firstItem.climbType : '---';
+
+                        appState.clickableRegions.push({ dayIndex, dataType: type, field: 'location', value: locationText, x: tableCoords.location.x, y: textY, width: tableCoords.location.width, height: rowHeight, canvasType: type, id: firstItemId });
+                        appState.clickableRegions.push({ dayIndex, dataType: type, field: 'climbType', value: actualClimbType, x: tableCoords.climbType.x, y: textY, width: tableCoords.climbType.width, height: rowHeight, canvasType: type, id: firstItemId });
+                        appState.clickableRegions.push({ dayIndex, dataType: type, field: 'setterCount', value: setterCountText, x: tableCoords.setters.x, y: textY, width: tableCoords.setters.width, height: rowHeight, canvasType: type, id: firstItemId });
+
+                        currentY += rowHeight;
                     }
-                    
-                    const locationText = itemsForLocation.length > 0 ? capitalizeWallNames(itemsForLocation.map(i => i.walls.join(', ')).join(', ')) : '-';
-                    const setterCountText = itemsForLocation.length > 0 ? String(itemsForLocation.reduce((total, item) => total + item.setterCount, 0)) : '-';
-                    
-                    ctx.fillText(dateStr, tableCoords.date.x, y);
-                    ctx.fillText(truncateText(ctx, locationText, tableCoords.location.width), tableCoords.location.x, y);
-                    ctx.fillText(climbTypeText, tableCoords.climbType.x, y);
-                    ctx.fillText(setterCountText, tableCoords.setters.x, y);
-
-                    const firstItem = itemsForLocation.length > 0 ? itemsForLocation[0] : null;
-                    const firstItemId = firstItem ? firstItem.id : null;
-                    // Pass the actual stored value to the editor
-                    const actualClimbType = firstItem ? firstItem.climbType : '-'; 
-
-                    const textY = y - (rowHeight / 2);
-                    const textHeight = rowHeight;
-                    const canvasType = (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') ? 'combined' : type;
-
-                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'location', value: locationText, x: tableCoords.location.x, y: textY, width: tableCoords.location.width, height: textHeight, canvasType, id: firstItemId });
-                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'climbType', value: actualClimbType, x: tableCoords.climbType.x, y: textY, width: tableCoords.climbType.width, height: textHeight, canvasType, id: firstItemId });
-                    appState.clickableRegions.push({ dayIndex, dataType: type, field: 'setterCount', value: setterCountText, x: tableCoords.setters.x, y: textY, width: tableCoords.setters.width, height: textHeight, canvasType, id: firstItemId });
                 });
             }
 
-            preview.addEventListener('click', function(e) {
-                // Only proceed if the click is on a canvas and no editor is active
-                if (document.getElementById('canvas-editor') || e.target.tagName !== 'CANVAS') return;
+        preview.addEventListener('click', function(e) {
+            // Only proceed if the click is on a canvas and no editor is active
+            if (document.getElementById('canvas-editor') || e.target.tagName !== 'CANVAS') return;
 
-                const canvas = e.target;
-                const rect = canvas.getBoundingClientRect();
+            const canvas = e.target;
+            const rect = canvas.getBoundingClientRect();
 
-                // Calculate scale factors to match click to canvas resolution
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                const x = (e.clientX - rect.left) * scaleX;
-                const y = (e.clientY - rect.top) * scaleY;
+            // Calculate scale factors to match click to canvas resolution
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
 
-                for (const region of appState.clickableRegions) {
-                    // Check if click is within the region's bounding box
-                    if (x > region.x && x < region.x + region.width && y > region.y && y < region.y + region.height) {
-                        showEditor(region, canvas);
-                        return;
-                    }
+            for (const region of appState.clickableRegions) {
+                // Check if click is within the region's bounding box
+                if (x > region.x && x < region.x + region.width && y > region.y && y < region.y + region.height) {
+                    showEditor(region, canvas);
+                    return;
                 }
+            }
+        });
+
+        function showEditor(region, canvas) {
+            let editorElement;
+            // --- CHANGE: The full list of user-selectable options ---
+            const climbTypeOptions = ['Rope', 'Boulder', 'Slab', 'Vert', 'Overhang', 'Steep'];
+
+            if (region.field === 'climbType') {
+                editorElement = document.createElement('select');
+
+                // Add a special disabled "Both" option if it's currently displayed
+                if(region.value === 'Both' || (appState.scheduleByDay[region.dayIndex].routes.length > 0 && appState.scheduleByDay[region.dayIndex].boulders.length > 0)) {
+                    const bothOption = document.createElement('option');
+                    bothOption.value = "Both";
+                    bothOption.textContent = "Both (Automatic)";
+                    bothOption.disabled = true;
+                    bothOption.selected = true;
+                    editorElement.appendChild(bothOption);
+                }
+
+                climbTypeOptions.forEach(optionText => {
+                    const option = document.createElement('option');
+                    option.value = optionText;
+                    option.textContent = optionText;
+                    if (optionText === region.value) option.selected = true;
+                    editorElement.appendChild(option);
+                });
+            } else {
+                editorElement = document.createElement('input');
+                editorElement.type = region.field === 'setterCount' ? 'number' : 'text';
+                editorElement.value = region.value === '-' ? '' : region.value;
+            }
+
+            // ... (the rest of the function remains the same) ...
+            editorElement.id = 'canvas-editor';
+            const canvasRect = canvas.getBoundingClientRect();
+            const scaleX = canvasRect.width / canvas.width;
+            const scaleY = canvasRect.height / canvas.height;
+            document.body.appendChild(editorElement);
+            editorElement.style.position = 'absolute';
+            editorElement.style.left = `${window.scrollX + canvasRect.left + (region.x * scaleX)}px`;
+            editorElement.style.top = `${window.scrollY + canvasRect.top + (region.y * scaleY)}px`;
+            editorElement.style.width = `${region.width * scaleX}px`;
+            editorElement.style.height = `${region.height * scaleY}px`;
+            editorElement.style.font = `${14 * scaleY}px Montserrat, Arial, sans-serif`;
+            editorElement.style.border = '2px solid #4db8a8';
+            editorElement.style.boxSizing = 'border-box';
+            editorElement.focus();
+            if (editorElement.tagName === 'INPUT') editorElement.select();
+
+            const handleUpdate = () => {
+                updateScheduleData(region, editorElement.value);
+                if(editorElement.parentNode) document.body.removeChild(editorElement);
+            };
+
+            editorElement.addEventListener('blur', handleUpdate, { once: true });
+            editorElement.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') editorElement.blur();
+                else if (e.key === 'Escape') if(editorElement.parentNode) document.body.removeChild(editorElement);
             });
+            if (editorElement.tagName === 'SELECT') editorElement.addEventListener('change', handleUpdate, { once: true });
+        }
 
-            function showEditor(region, canvas) {
-                let editorElement;
-                // --- CHANGE: The full list of user-selectable options ---
-                const climbTypeOptions = ['Rope', 'Boulder', 'Slab', 'Vert', 'Overhang', 'Steep'];
-
-                if (region.field === 'climbType') {
-                    editorElement = document.createElement('select');
-                    
-                    // Add a special disabled "Both" option if it's currently displayed
-                    if(region.value === 'Both' || (appState.scheduleByDay[region.dayIndex].routes.length > 0 && appState.scheduleByDay[region.dayIndex].boulders.length > 0)) {
-                        const bothOption = document.createElement('option');
-                        bothOption.value = "Both";
-                        bothOption.textContent = "Both (Automatic)";
-                        bothOption.disabled = true;
-                        bothOption.selected = true;
-                        editorElement.appendChild(bothOption);
-                    }
-
-                    climbTypeOptions.forEach(optionText => {
-                        const option = document.createElement('option');
-                        option.value = optionText;
-                        option.textContent = optionText;
-                        if (optionText === region.value) option.selected = true;
-                        editorElement.appendChild(option);
-                    });
-                } else {
-                    editorElement = document.createElement('input');
-                    editorElement.type = region.field === 'setterCount' ? 'number' : 'text';
-                    editorElement.value = region.value === '-' ? '' : region.value;
-                }
-
-                // ... (the rest of the function remains the same) ...
-                editorElement.id = 'canvas-editor';
-                const canvasRect = canvas.getBoundingClientRect();
-                const scaleX = canvasRect.width / canvas.width;
-                const scaleY = canvasRect.height / canvas.height;
-                document.body.appendChild(editorElement);
-                editorElement.style.position = 'absolute';
-                editorElement.style.left = `${window.scrollX + canvasRect.left + (region.x * scaleX)}px`;
-                editorElement.style.top = `${window.scrollY + canvasRect.top + (region.y * scaleY)}px`;
-                editorElement.style.width = `${region.width * scaleX}px`;
-                editorElement.style.height = `${region.height * scaleY}px`;
-                editorElement.style.font = `${14 * scaleY}px Montserrat, Arial, sans-serif`;
-                editorElement.style.border = '2px solid #4db8a8';
-                editorElement.style.boxSizing = 'border-box';
-                editorElement.focus();
-                if (editorElement.tagName === 'INPUT') editorElement.select();
-
-                const handleUpdate = () => {
-                    updateScheduleData(region, editorElement.value);
-                    if(editorElement.parentNode) document.body.removeChild(editorElement);
-                };
-
-                editorElement.addEventListener('blur', handleUpdate, { once: true });
-                editorElement.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') editorElement.blur();
-                    else if (e.key === 'Escape') if(editorElement.parentNode) document.body.removeChild(editorElement);
-                });
-                if (editorElement.tagName === 'SELECT') editorElement.addEventListener('change', handleUpdate, { once: true });
-            }
-
-             function updateScheduleData(region, newValue) {
+         function updateScheduleData(region, newValue) {
                 if (newValue === region.value) return;
 
                 const dayData = appState.scheduleByDay[region.dayIndex];
@@ -1022,22 +1119,17 @@
 
                 if (appState.selectedGym === 'GVN' || appState.selectedGym === 'PLN') {
                     itemToUpdate = dayData.routes.find(item => item.id === region.id);
-                    if (itemToUpdate) {
-                        sourceArray = dayData.routes;
-                    } else {
+                    if (itemToUpdate) sourceArray = dayData.routes;
+                    else {
                         itemToUpdate = dayData.boulders.find(item => item.id === region.id);
-                        if (itemToUpdate) {
-                            sourceArray = dayData.boulders;
-                        }
+                        if (itemToUpdate) sourceArray = dayData.boulders;
                     }
                 } else {
                     sourceArray = dayData[region.dataType];
-                    if (sourceArray) {
-                        itemToUpdate = sourceArray.find(item => item.id === region.id);
-                    }
+                    if (sourceArray) itemToUpdate = sourceArray.find(item => item.id === region.id);
                 }
 
-                if (itemToUpdate) {
+                if (itemToUpdate) { // Logic for updating an EXISTING item
                     if (region.field === 'location') {
                         if (!newValue) {
                             const updatedArray = sourceArray.filter(item => item.id !== region.id);
@@ -1046,35 +1138,38 @@
                         } else {
                             itemToUpdate.walls = newValue.split(',').map(w => w.trim());
                         }
-                    } else {
+                    } else if (region.field === 'setterCount') {
+                        // --- FIX: Always parse setter count to a number ---
+                        itemToUpdate.setterCount = parseInt(newValue, 10) || 0;
+                    } else { // This handles climbType
                         itemToUpdate[region.field] = newValue;
                     }
 
-                } else if (newValue && newValue !== '-' && newValue !== '0') {
+                } else if (newValue && newValue !== '-' && newValue !== '0') { // Logic for creating a NEW item
                     const newEntry = {
                         id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-                        date: new Date(window.scheduleStartSunday.getTime() + region.dayIndex * 24 * 60 * 60 * 1000),
+                        date: new Date(window.scheduleStartDay.getTime() + region.dayIndex * 24 * 60 * 60 * 1000),
                         walls: ['New Set'],
-                        // --- CHANGE: Set default climbType based on the region's data type ---
-                        climbType: region.dataType === 'routes' ? 'Rope' : 'Boulder',
+                        climbType: 'Sport', // A sensible default
                         setterCount: 1
                     };
-                    
+
+                    // --- FIX: Directly assign the user's selected value ---
                     if (region.field === 'setterCount') {
-                        newEntry.setterCount = Math.max(1, parseInt(newValue, 10) || 1);
+                        newEntry.setterCount = parseInt(newValue, 10) || 1;
                     } else if (region.field === 'location') {
                         newEntry.walls = newValue.split(',').map(w => w.trim());
-                    } else {
-                        newEntry[region.field] = newValue;
+                    } else if (region.field === 'climbType') {
+                        newEntry.climbType = newValue;
                     }
-                    
+
                     dayData[region.dataType].push(newEntry);
                 }
-                
-                renderApp();
-            }
 
-            function saveLatestSchedule() {
+                renderApp();
+         }
+
+        function saveLatestSchedule() {
                 if (!appState.selectedGym || appState.scheduleByDay.length === 0) {
                      showMessage('Nothing generated to save.', 'error');
                      return;
@@ -1083,14 +1178,15 @@
                 const dataToSave = {
                     scheduleByDay: appState.scheduleByDay,
                     dateRange: appState.dateRange,
-                    scheduleStartSunday: window.scheduleStartSunday.toISOString()
+                    // --- THE FIX: Use the correct variable name here ---
+                    scheduleStartDay: window.scheduleStartDay.toISOString()
                 };
                 localStorage.setItem(key, JSON.stringify(dataToSave));
                 showMessage(`${gymNameMap[appState.selectedGym] || appState.selectedGym} schedule saved to this browser!`, 'info');
                 updateLoadButtonState();
-            }
+        }
 
-            function loadLatestSchedule() {
+        function loadLatestSchedule() {
                 if (!appState.selectedGym) return;
                 const key = `latest_schedule_${appState.selectedGym}`;
                 const savedData = localStorage.getItem(key);
@@ -1098,246 +1194,247 @@
                     const parsedData = JSON.parse(savedData);
                     appState.scheduleByDay = parsedData.scheduleByDay;
                     appState.dateRange = parsedData.dateRange;
-                    window.scheduleStartSunday = new Date(parsedData.scheduleStartSunday);
+                    // --- THE FIX: Use the correct variable name here ---
+                    window.scheduleStartDay = new Date(parsedData.scheduleStartDay);
                     renderApp();
                 } else {
                     showMessage(`No saved schedule found for ${gymNameMap[appState.selectedGym] || appState.selectedGym}.`, 'error');
                 }
+        }
+
+        function updateLoadButtonState() {
+            if (!appState.selectedGym) {
+                loadBtn.disabled = true;
+                return;
+            }
+            const key = `latest_schedule_${appState.selectedGym}`;
+            loadBtn.disabled = !localStorage.getItem(key);
+        }
+
+        function expandWallRanges(titleStr) {
+            const namedRangeRegex = /([a-zA-Z]+)(\d+)-([a-zA-Z]+)(\d+)/g;
+            const simpleRangeRegex = /([a-zA-Z]+)(\d+)-(\d+)/g;
+            let expandedStr = titleStr;
+            expandedStr = expandedStr.replace(namedRangeRegex, (match, prefix1, startStr, prefix2, endStr) => {
+                if (prefix1 !== prefix2) return match;
+                const start = parseInt(startStr);
+                const end = parseInt(endStr);
+                const min = Math.min(start, end);
+                const max = Math.max(start, end);
+                const expanded = [];
+                for (let i = min; i <= max; i++) expanded.push(prefix1 + i);
+                return expanded.join(', ');
+            });
+            expandedStr = expandedStr.replace(simpleRangeRegex, (match, prefix, startStr, endStr) => {
+                const start = parseInt(startStr);
+                const end = parseInt(endStr);
+                const expanded = [];
+                for (let i = start; i <= end; i++) expanded.push(prefix + i);
+                return expanded.join(', ');
+            });
+            return expandedStr;
+        }
+
+        // --- NEW: Function to generate and open the pre-filled email draft ---
+        function generateAndOpenEmail() {
+            if (appState.scheduleByDay.length === 0) {
+                showMessage('Please generate a schedule before emailing.', 'error');
+                return;
             }
 
-            function updateLoadButtonState() {
-                if (!appState.selectedGym) {
-                    loadBtn.disabled = true;
-                    return;
-                }
-                const key = `latest_schedule_${appState.selectedGym}`;
-                loadBtn.disabled = !localStorage.getItem(key);
-            }
+            // 1. Get saved templates, with sensible defaults
+            const to = localStorage.getItem('emailConfig_to') || '';
+            const cc = localStorage.getItem('emailConfig_cc') || '';
+            const subjectTemplate = localStorage.getItem('emailConfig_subject') || '[GYM_NAME] Setting Schedule: [DATE_RANGE]';
+            const bodyTemplate = localStorage.getItem('emailConfig_body') || `Hi Team,\n\nPlease find the setting schedule for [GYM_NAME] for the weeks of [DATE_RANGE].\n\n(Please remember to attach the schedule image to this email before sending.)\n\nThanks!`;
 
-            function expandWallRanges(titleStr) {
-                const namedRangeRegex = /([a-zA-Z]+)(\d+)-([a-zA-Z]+)(\d+)/g;
-                const simpleRangeRegex = /([a-zA-Z]+)(\d+)-(\d+)/g;
-                let expandedStr = titleStr;
-                expandedStr = expandedStr.replace(namedRangeRegex, (match, prefix1, startStr, prefix2, endStr) => {
-                    if (prefix1 !== prefix2) return match;
-                    const start = parseInt(startStr);
-                    const end = parseInt(endStr);
-                    const min = Math.min(start, end);
-                    const max = Math.max(start, end);
-                    const expanded = [];
-                    for (let i = min; i <= max; i++) expanded.push(prefix1 + i);
-                    return expanded.join(', ');
-                });
-                expandedStr = expandedStr.replace(simpleRangeRegex, (match, prefix, startStr, endStr) => {
-                    const start = parseInt(startStr);
-                    const end = parseInt(endStr);
-                    const expanded = [];
-                    for (let i = start; i <= end; i++) expanded.push(prefix + i);
-                    return expanded.join(', ');
-                });
-                return expandedStr;
-            }
+            // 2. Replace placeholders with actual data
+            const gymFullName = gymNameMap[appState.selectedGym] || appState.selectedGym;
+            const subject = subjectTemplate
+                .replace('[GYM_NAME]', gymFullName)
+                .replace('[DATE_RANGE]', appState.dateRange);
+            const body = bodyTemplate
+                .replace('[GYM_NAME]', gymFullName)
+                .replace('[DATE_RANGE]', appState.dateRange);
 
-            // --- NEW: Function to generate and open the pre-filled email draft ---
-            function generateAndOpenEmail() {
-                if (appState.scheduleByDay.length === 0) {
-                    showMessage('Please generate a schedule before emailing.', 'error');
-                    return;
-                }
+            // 3. Construct the mailto link, ensuring components are URL-encoded
+            let mailtoLink = `mailto:${encodeURIComponent(to)}`;
+            mailtoLink += `?subject=${encodeURIComponent(subject)}`;
+            if (cc) mailtoLink += `&cc=${encodeURIComponent(cc)}`;
+            mailtoLink += `&body=${encodeURIComponent(body)}`;
 
-                // 1. Get saved templates, with sensible defaults
-                const to = localStorage.getItem('emailConfig_to') || '';
-                const cc = localStorage.getItem('emailConfig_cc') || '';
-                const subjectTemplate = localStorage.getItem('emailConfig_subject') || '[GYM_NAME] Setting Schedule: [DATE_RANGE]';
-                const bodyTemplate = localStorage.getItem('emailConfig_body') || `Hi Team,\n\nPlease find the setting schedule for [GYM_NAME] for the weeks of [DATE_RANGE].\n\n(Please remember to attach the schedule image to this email before sending.)\n\nThanks!`;
+            // 4. Trigger the user's email client
+            window.location.href = mailtoLink;
+        }
 
-                // 2. Replace placeholders with actual data
-                const gymFullName = gymNameMap[appState.selectedGym] || appState.selectedGym;
-                const subject = subjectTemplate
-                    .replace('[GYM_NAME]', gymFullName)
-                    .replace('[DATE_RANGE]', appState.dateRange);
-                const body = bodyTemplate
-                    .replace('[GYM_NAME]', gymFullName)
-                    .replace('[DATE_RANGE]', appState.dateRange);
+        // --- NEW: Functions to save and load email settings from localStorage ---
+        function saveEmailSettings() {
+            localStorage.setItem('emailConfig_to', emailToInput.value);
+            localStorage.setItem('emailConfig_cc', emailCcInput.value);
+            localStorage.setItem('emailConfig_subject', emailSubjectInput.value);
+            localStorage.setItem('emailConfig_body', emailBodyInput.value);
 
-                // 3. Construct the mailto link, ensuring components are URL-encoded
-                let mailtoLink = `mailto:${encodeURIComponent(to)}`;
-                mailtoLink += `?subject=${encodeURIComponent(subject)}`;
-                if (cc) mailtoLink += `&cc=${encodeURIComponent(cc)}`;
-                mailtoLink += `&body=${encodeURIComponent(body)}`;
+            showMessage('Email settings saved successfully!', 'info');
+            settingsModalOverlay.style.display = 'none';
+        }
 
-                // 4. Trigger the user's email client
-                window.location.href = mailtoLink;
-            }
-
-            // --- NEW: Functions to save and load email settings from localStorage ---
-            function saveEmailSettings() {
-                localStorage.setItem('emailConfig_to', emailToInput.value);
-                localStorage.setItem('emailConfig_cc', emailCcInput.value);
-                localStorage.setItem('emailConfig_subject', emailSubjectInput.value);
-                localStorage.setItem('emailConfig_body', emailBodyInput.value);
-
-                showMessage('Email settings saved successfully!', 'info');
-                settingsModalOverlay.style.display = 'none';
-            }
-
-            function loadEmailSettings() {
-                emailToInput.value = localStorage.getItem('emailConfig_to') || 'marketing@example.com, director@example.com';
-                emailCcInput.value = localStorage.getItem('emailConfig_cc') || '';
+        function loadEmailSettings() {
+                emailToInput.value = localStorage.getItem('emailConfig_to') || 'Shelbi.Kirbow@movementgyms.com';
+                emailCcInput.value = localStorage.getItem('emailConfig_cc') || 'Nolan.Black@MovementGyms.com, GymDirector@MovementGyms.com, AssistantGymDirector@MovementGyms.com';
                 emailSubjectInput.value = localStorage.getItem('emailConfig_subject') || '[GYM_NAME] Setting Schedule: [DATE_RANGE]';
                 emailBodyInput.value = localStorage.getItem('emailConfig_body') || `Hi Team,\n\nPlease find the setting schedule for [GYM_NAME] for the weeks of [DATE_RANGE].\n\n(Please remember to attach the schedule image to this email before sending.)\n\nThanks!`;
-            }
+        }
 
-            function parseWalls(titleStr, gym) {
-                if (!titleStr || !gymWalls[gym]) return [];
-                const currentGymWalls = gymWalls[gym];
-                const expandedTitle = expandWallRanges(titleStr);
-                let cleanTitle = expandedTitle.toLowerCase().replace('jcca - ', '');
-                const parts = cleanTitle.replace(/\./g, '').split(/[,\/\s+]+/g).filter(s => s);
-                const walls = [];
-                let buffer = [];
-                for (const part of parts) {
-                    buffer.push(part);
-                    const potentialWall = buffer.join(' ');
-                    if (currentGymWalls[potentialWall]) {
-                        walls.push(potentialWall);
-                        buffer = [];
-                    }
+        function parseWalls(titleStr, gym) {
+            if (!titleStr || !gymWalls[gym]) return [];
+            const currentGymWalls = gymWalls[gym];
+            const expandedTitle = expandWallRanges(titleStr);
+            let cleanTitle = expandedTitle.toLowerCase().replace('jcca - ', '');
+            const parts = cleanTitle.replace(/\./g, '').split(/[,\/\s+]+/g).filter(s => s);
+            const walls = [];
+            let buffer = [];
+            for (const part of parts) {
+                buffer.push(part);
+                const potentialWall = buffer.join(' ');
+                if (currentGymWalls[potentialWall]) {
+                    walls.push(potentialWall);
+                    buffer = [];
                 }
-                for(const part of buffer){
-                    if(currentGymWalls[part]) walls.push(part);
-                }
-                return [...new Set(walls)];
             }
-
-            function formatDate(date) {
-                const d = new Date(date);
-                const month = d.getMonth() + 1;
-                const day = d.getDate();
-                return `${month}/${day}`;
+            for(const part of buffer){
+                if(currentGymWalls[part]) walls.push(part);
             }
+            return [...new Set(walls)];
+        }
 
-            function getWallAngle(walls, gym) {
-                if (walls.length === 0 || !gymWalls[gym]) return 'Slab'; // Default
-                const firstWall = walls.find(w => gymWalls[gym][w]);
-                // --- Look for the 'climb_type' property in your gymWalls object ---
-                return firstWall ? gymWalls[gym][firstWall]?.climb_type || 'Slab' : 'Slab';
+        function formatDate(date) {
+            const d = new Date(date);
+            const month = d.getMonth() + 1;
+            const day = d.getDate();
+            return `${month}/${day}`;
+        }
+
+        function getWallAngle(walls, gym) {
+            if (walls.length === 0 || !gymWalls[gym]) return 'Slab'; // Default
+            const firstWall = walls.find(w => gymWalls[gym][w]);
+            // --- Look for the 'climb_type' property in your gymWalls object ---
+            return firstWall ? gymWalls[gym][firstWall]?.climb_type || 'Slab' : 'Slab';
+        }
+
+        function truncateText(ctx, text, maxWidth) {
+            if (ctx.measureText(text).width <= maxWidth) return text;
+            let truncated = text;
+            while (ctx.measureText(truncated + '...').width > maxWidth && truncated.length > 0) {
+                truncated = truncated.slice(0, -1);
             }
+            return truncated + '...';
+        }
 
-            function truncateText(ctx, text, maxWidth) {
-                if (ctx.measureText(text).width <= maxWidth) return text;
-                let truncated = text;
-                while (ctx.measureText(truncated + '...').width > maxWidth && truncated.length > 0) {
-                    truncated = truncated.slice(0, -1);
-                }
-                return truncated + '...';
-            }
+        function capitalizeWallNames(text) {
+            if (!text) return '';
+            return text.split(', ').map(wallName => {
+                return wallName.split(' ').map(word => {
+                    return word.charAt(0).toUpperCase() + word.slice(1);
+                }).join(' ');
+            }).join(', ');
+        }
 
-            function capitalizeWallNames(text) {
-                if (!text) return '';
-                return text.split(', ').map(wallName => {
-                    return wallName.split(' ').map(word => {
-                        return word.charAt(0).toUpperCase() + word.slice(1);
-                    }).join(' ');
-                }).join(', ');
-            }
-
-            function downloadImages() {
-                if (!window.generatedCanvases) return;
-                window.generatedCanvases.forEach(({ canvas, name }) => {
-                    canvas.toBlob((blob) => {
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = name;
-                        a.click();
-                        URL.revokeObjectURL(url);
-                    });
+        function downloadImages() {
+            if (!window.generatedCanvases) return;
+            window.generatedCanvases.forEach(({ canvas, name }) => {
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = name;
+                    a.click();
+                    URL.revokeObjectURL(url);
                 });
-            }
+            });
+        }
 
-            initializeState();
-        });
-    </script>
-    <!-- ======================= -->
-    <!--     INSTRUCTIONS MODAL    -->
-    <!-- ======================= -->
-    <div id="help-modal-overlay" class="modal-overlay">
-        <div class="modal-content">
-            <span id="modal-close-btn" class="modal-close">&times;</span>
-            <h2>How to Use the Schedule Generator</h2>
+        initializeState();
+    });
+</script>
+<!-- ======================= -->
+<!--     INSTRUCTIONS MODAL    -->
+<!-- ======================= -->
+<div id="help-modal-overlay" class="modal-overlay">
+    <div class="modal-content">
+        <span id="modal-close-btn" class="modal-close">&times;</span>
+        <h2>How to Use the Schedule Generator</h2>
 
-            <h4>Primary Workflow (Starting from a CSV)</h4>
-            <ol>
-                <li>
-                    <strong>Export from Humanity:</strong> Export the desired two-week period as a CSV file from the Humanity "Schedule" tab (Tools > Export Schedule).
-                </li>
-                <li>
-                    <strong>Select Gym:</strong> Choose your gym location from the dropdown menu.
-                </li>
-                <li>
-                    <strong>Upload CSV:</strong> Drag and drop the CSV file onto the upload area.
-                </li>
-                <li>
-                    <strong>Generate:</strong> Click "Generate Schedule" to create the visual preview.
-                </li>
-                <li>
-                    <strong>Edit Directly (New!):</strong> The generated preview is interactive! Click directly on any text for location, climb type, or setter count to make quick changes. Press Enter or click away to save your edit.
-                </li>
-                <li>
-                    <strong>Download or Print:</strong> Once you are happy with the schedule, use the "Download Image" or "Print / Save PDF" buttons to export your final copy.
-                </li>
-                <li>
-                    <strong>Emailing</strong> Optionally, you can use the Email Settings to configure an email for you. All you have to do is define what you want in setting and click Email Schedule, and your email app will open. <strong>Be sure to upload the new schedule you made!</strong>
-                </li>
-            </ol>
+        <h4>Primary Workflow (Starting from a CSV)</h4>
+        <ol>
+            <li>
+                <strong>Export from Humanity:</strong> Export the desired two-week period as a CSV file from the Humanity "Schedule" tab (Tools > Export Schedule).
+            </li>
+            <li>
+                <strong>Select Gym:</strong> Choose your gym location from the dropdown menu.
+            </li>
+            <li>
+                <strong>Upload CSV:</strong> Drag and drop the CSV file onto the upload area.
+            </li>
+            <li>
+                <strong>Generate:</strong> Click "Generate Schedule" to create the visual preview.
+            </li>
+            <li>
+                <strong>Edit Directly (New!):</strong> The generated preview is interactive! Click directly on any text for location, climb type, or setter count to make quick changes. Press Enter or click away to save your edit.
+            </li>
+            <li>
+                <strong>Download or Print:</strong> Once you are happy with the schedule, use the "Download Image" or "Print / Save PDF" buttons to export your final copy.
+            </li>
+            <li>
+                <strong>Emailing</strong> Optionally, you can use the Email Settings to configure an email for you. All you have to do is define what you want in setting and click Email Schedule, and your email app will open. <strong>Be sure to upload the new schedule you made!</strong>
+            </li>
+        </ol>
 
-            <h4 style="margin-top: 30px;">Quick Edits (Saving & Loading)</h4>
-            <p>For making fast changes without needing a new CSV:</p>
-            <ul>
-                <li><strong>Save Your Work:</strong> After generating or editing a schedule, click <strong>"Save as Latest"</strong>. This stores the current schedule in your browser, specifically for the gym you have selected.</li>
-                <li><strong>Load Your Work:</strong> The next time you visit, simply select the gym and click <strong>"Load Latest"</strong>. Your saved schedule will instantly appear, ready for more edits. The "Load Latest" button will only be active if a saved schedule exists for that gym.</li>
-            </ul>
+        <h4 style="margin-top: 30px;">Quick Edits (Saving & Loading)</h4>
+        <p>For making fast changes without needing a new CSV:</p>
+        <ul>
+            <li><strong>Save Your Work:</strong> After generating or editing a schedule, click <strong>"Save as Latest"</strong>. This stores the current schedule in your browser, specifically for the gym you have selected.</li>
+            <li><strong>Load Your Work:</strong> The next time you visit, simply select the gym and click <strong>"Load Latest"</strong>. Your saved schedule will instantly appear, ready for more edits. The "Load Latest" button will only be active if a saved schedule exists for that gym.</li>
+        </ul>
 
-            <p style="font-size: 12px; color: #666; margin-top: 20px;">
-                <strong>Note:</strong> Saved schedules are stored in your web browser's local storage, not in the cloud. They are only accessible on the same computer and browser you used to save them.
-            </p>
-        </div>
+        <p style="font-size: 12px; color: #666; margin-top: 20px;">
+            <strong>Note:</strong> Saved schedules are stored in your web browser's local storage, not in the cloud. They are only accessible on the same computer and browser you used to save them.
+        </p>
     </div>
-    <!-- ======================= -->
-    <!--     SETTINGS MODAL        -->
-    <!-- ======================= -->
-    <div id="settings-modal-overlay" class="modal-overlay">
-        <div class="modal-content">
-            <span id="settings-modal-close-btn" class="modal-close">&times;</span>
-            <h2>Email Settings</h2>
-            <p>Configure the default email template. These settings will be saved in your browser.</p>
+</div>
+<!-- ======================= -->
+<!--     SETTINGS MODAL        -->
+<!-- ======================= -->
+<div id="settings-modal-overlay" class="modal-overlay">
+    <div class="modal-content">
+        <span id="settings-modal-close-btn" class="modal-close">&times;</span>
+        <h2>Email Settings</h2>
+        <p>Configure the default email template. These settings will be saved in your browser.</p>
 
-            <div class="settings-form">
-                <div class="control-group">
-                    <label for="email-to-input">To (separate emails with a comma)</label>
-                    <textarea id="email-to-input" rows="2"></textarea>
-                </div>
-                <div class="control-group">
-                    <label for="email-cc-input">CC (separate emails with a comma)</label>
-                    <textarea id="email-cc-input" rows="2"></textarea>
-                </div>
-                <div class="control-group">
-                    <label for="email-subject-input">Subject Template</label>
-                    <input type="text" id="email-subject-input">
-                    <small class="template-hint">Use <strong>[GYM_NAME]</strong> and <strong>[DATE_RANGE]</strong> as placeholders.</small>
-                </div>
-                <div class="control-group">
-                    <label for="email-body-input">Body Template</label>
-                    <textarea id="email-body-input" rows="6"></textarea>
-                    <small class="template-hint">Use <strong>[GYM_NAME]</strong> and <strong>[DATE_RANGE]</strong>. The user must manually attach the schedule image.</small>
-                </div>
+        <div class="settings-form">
+            <div class="control-group">
+                <label for="email-to-input">To (separate emails with a comma)</label>
+                <textarea id="email-to-input" rows="2"></textarea>
             </div>
-
-            <div class="modal-buttons">
-                <button class="btn-primary" id="save-settings-btn">Save Settings</button>
+            <div class="control-group">
+                <label for="email-cc-input">CC (separate emails with a comma)</label>
+                <textarea id="email-cc-input" rows="2"></textarea>
+            </div>
+            <div class="control-group">
+                <label for="email-subject-input">Subject Template</label>
+                <input type="text" id="email-subject-input">
+                <small class="template-hint">Use <strong>[GYM_NAME]</strong> and <strong>[DATE_RANGE]</strong> as placeholders.</small>
+            </div>
+            <div class="control-group">
+                <label for="email-body-input">Body Template</label>
+                <textarea id="email-body-input" rows="6"></textarea>
+                <small class="template-hint">Use <strong>[GYM_NAME]</strong> and <strong>[DATE_RANGE]</strong>. The user must manually attach the schedule image.</small>
             </div>
         </div>
+
+        <div class="modal-buttons">
+            <button class="btn-primary" id="save-settings-btn">Save Settings</button>
+        </div>
     </div>
+</div>
 </body>
 </html>
