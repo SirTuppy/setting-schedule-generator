@@ -1287,7 +1287,8 @@
 
             // --- NEW: Function to generate and open the pre-filled email draft ---
             function generateAndOpenEmail() {
-                if (appState.scheduleByDay.length === 0) {
+                // Check if we have any active schedules
+                if (appState.activeGyms.length === 0) {
                     showMessage('Please generate a schedule before emailing.', 'error');
                     return;
                 }
@@ -1298,22 +1299,41 @@
                 const subjectTemplate = localStorage.getItem('emailConfig_subject') || '[GYM_NAME] Setting Schedule: [DATE_RANGE]';
                 const bodyTemplate = localStorage.getItem('emailConfig_body') || `Hi Team,\n\nPlease find the setting schedule for [GYM_NAME] for the weeks of [DATE_RANGE].\n\n(Please remember to attach the schedule image to this email before sending.)\n\nThanks!`;
 
-                // 2. Replace placeholders with actual data
-                const gymFullName = gymNameMap[appState.selectedGym] || appState.selectedGym;
+                // 2. Build gym names and date range from active gyms
+                let gymNames = [];
+                let dateRanges = [];
+
+                appState.activeGyms.forEach(gymCode => {
+                    const gymData = appState.schedules[gymCode];
+                    if (gymData) {
+                        gymNames.push(gymNameMap[gymCode] || gymCode);
+                        dateRanges.push(gymData.dateRange);
+                    }
+                });
+
+                // Create combined strings for multiple gyms
+                const gymFullName = gymNames.length > 1
+                    ? gymNames.join(', ')
+                    : (gymNames[0] || 'All Gyms');
+
+                // Use the first date range (they should all be the same for a combined schedule)
+                const dateRange = dateRanges[0] || '';
+
+                // 3. Replace placeholders with actual data
                 const subject = subjectTemplate
                     .replace('[GYM_NAME]', gymFullName)
-                    .replace('[DATE_RANGE]', appState.dateRange);
+                    .replace('[DATE_RANGE]', dateRange);
                 const body = bodyTemplate
                     .replace('[GYM_NAME]', gymFullName)
-                    .replace('[DATE_RANGE]', appState.dateRange);
+                    .replace('[DATE_RANGE]', dateRange);
 
-                // 3. Construct the mailto link, ensuring components are URL-encoded
+                // 4. Construct the mailto link, ensuring components are URL-encoded
                 let mailtoLink = `mailto:${encodeURIComponent(to)}`;
                 mailtoLink += `?subject=${encodeURIComponent(subject)}`;
                 if (cc) mailtoLink += `&cc=${encodeURIComponent(cc)}`;
                 mailtoLink += `&body=${encodeURIComponent(body)}`;
 
-                // 4. Trigger the user's email client
+                // 5. Trigger the user's email client
                 window.location.href = mailtoLink;
             }
 
