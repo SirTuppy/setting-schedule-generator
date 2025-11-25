@@ -338,11 +338,18 @@
                 margin: 0;
             }
 
+            * {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
             body,
             .app-container {
                 background: white;
                 height: auto;
                 display: block;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             .sidebar,
@@ -353,7 +360,8 @@
             }
 
             .main-content {
-                padding: 0;
+                padding: 0 !important;
+                margin: 0 !important;
                 overflow: visible;
                 display: block;
             }
@@ -361,12 +369,14 @@
             #preview {
                 display: block !important;
                 max-width: none;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             .gym-section {
                 border: none;
-                margin: 0;
-                padding: 0;
+                margin: 0 !important;
+                padding: 0 !important;
                 page-break-after: always;
             }
 
@@ -374,6 +384,10 @@
                 width: 100% !important;
                 height: auto !important;
                 max-width: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: block !important;
             }
         }
     </style>
@@ -1410,17 +1424,28 @@
             }
 
             function downloadImages() {
-                if (!window.generatedCanvases) return;
-                window.generatedCanvases.forEach(({ canvas, name }) => {
-                    canvas.toBlob((blob) => {
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = name;
-                        a.click();
-                        URL.revokeObjectURL(url);
-                    });
+                if (!window.generatedCanvases || window.generatedCanvases.length === 0) {
+                    showMessage('No schedules to download.', 'error');
+                    return;
+                }
+
+                // Add a delay between downloads to prevent browser blocking
+                let delay = 0;
+                window.generatedCanvases.forEach(({ canvas, name }, index) => {
+                    setTimeout(() => {
+                        canvas.toBlob((blob) => {
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = name;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                        });
+                    }, delay);
+                    delay += 200; // 200ms delay between each download
                 });
+
+                showMessage(`Downloading ${window.generatedCanvases.length} schedule image(s)...`, 'info');
             }
 
             function initializeState() {
