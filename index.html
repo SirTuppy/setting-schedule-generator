@@ -119,9 +119,7 @@
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
-            <div id="messages"></div>
-
-            <!-- Initial Upload State -->
+            <!-- Initial Upload State (Will become compact, never hidden) -->
             <div class="upload-container" id="upload-container">
                 <div class="upload-area" id="upload-area">
                     <div class="upload-icon">
@@ -137,6 +135,9 @@
                     <input type="file" id="csv-input" accept=".csv" multiple style="display: none;">
                 </div>
             </div>
+
+            <!-- Toast Container (Fixed Position) -->
+            <div id="messages"></div>
 
             <!-- Preview Area (Hidden initially) -->
             <div id="preview"></div>
@@ -281,9 +282,14 @@
             function handleFiles(files) {
                 if (!files || files.length === 0) return;
 
+                // --- CHANGE START: Reset data on new upload ---
+                csvData = [];
+                appState.activeGyms = []; // Optional: Clear active state so we don't mix old/new logic
+                appState.schedules = {};
+                // --- CHANGE END ---
+
                 let processedCount = 0;
                 const totalFiles = files.length;
-                csvData = []; // Reset data on new upload
 
                 Array.from(files).forEach(file => {
                     if (!file.name.endsWith('.csv')) {
@@ -300,8 +306,13 @@
                             csvData = csvData.concat(results.data);
                             processedCount++;
                             if (processedCount === totalFiles) {
-                                showMessage(`Loaded ${csvData.length} rows from ${totalFiles} file(s).`, 'info');
+                                showMessage(`Loaded ${results.data.length} rows from ${file.name}. Total: ${csvData.length}`, 'info');
                                 checkReady();
+
+                                // Auto-generate immediately when done parsing
+                                if (csvData.length > 0) {
+                                    generateSchedules();
+                                }
                             }
                         },
                         error: (error) => {
@@ -317,9 +328,22 @@
                 generateBtn.disabled = !(csvData && csvData.length > 0);
             }
 
-
+            // Updated showMessage to handle Toasts
             function showMessage(msg, type) {
-                messages.innerHTML = `<div class="${type}">${msg}</div>`;
+                const toast = document.createElement('div');
+                toast.className = `${type} toast-entry`;
+                toast.textContent = msg;
+
+                messages.appendChild(toast);
+
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    toast.classList.add('fading-out');
+                    // Wait for CSS transition to finish before removing from DOM
+                    setTimeout(() => {
+                        if (toast.parentNode) messages.removeChild(toast);
+                    }, 300);
+                }, 5000);
             }
 
             function initializeState() {
@@ -446,16 +470,18 @@
             } //end generateSchedule
 
             async function renderApp(silent = false) {
-                // --- FIX START: Lock container height and scroll position ---
-                // 1. Capture current height to prevent page collapse when innerHTML is cleared
+                // --- FIX START: Capture Scroll Positions ---
+                // 1. Capture current height to prevent vertical collapse
                 const previousHeight = preview.offsetHeight;
                 if (previousHeight > 0) {
                     preview.style.minHeight = `${previousHeight}px`;
                 }
 
-                // 2. Capture scroll position specifically here
-                const scrollX = window.scrollX;
-                const scrollY = window.scrollY;
+                // 2. Capture scroll positions specifically
+                // We need the window's vertical scroll (if user scrolled down to the section)
+                const windowScrollY = window.scrollY;
+                // We need the PREVIEW container's horizontal scroll (since it has overflow-x: auto)
+                const previewScrollLeft = preview.scrollLeft;
                 // --- FIX END ---
 
                 preview.innerHTML = '';
@@ -468,15 +494,16 @@
                 emailBtn.disabled = true;
 
                 if (appState.activeGyms.length === 0) {
-                    uploadContainer.style.display = 'flex';
+                    // Reset to full size upload if no gyms
+                    uploadContainer.classList.remove('compact');
                     preview.style.display = 'none';
-                    preview.style.minHeight = ''; // Reset height if going back to upload
+                    preview.style.minHeight = '';
                     return;
                 }
 
-                // Hide upload, show preview
-                uploadContainer.style.display = 'none';
-                preview.style.display = 'block';
+                // Compact the upload area, keep preview visible
+                uploadContainer.classList.add('compact');
+                preview.style.display = 'flex';
 
                 window.generatedCanvases = []; // Reset global list for download
 
@@ -524,12 +551,15 @@
                     showMessage('Schedules generated successfully!', 'info');
                 }
 
-                // --- FIX START: Restore Layout ---
-                // Remove the height lock so the container can resize naturally if the new content changed size
+                // --- FIX START: Restore Scroll Positions ---
+                // Remove the height lock so the container can resize naturally
                 preview.style.minHeight = '';
 
-                // Force browser to acknowledge the scroll position immediately
-                window.scrollTo(scrollX, scrollY);
+                // Restore vertical scroll for the window
+                window.scrollTo(0, windowScrollY);
+
+                // Restore horizontal scroll for the container
+                preview.scrollLeft = previewScrollLeft;
                 // --- FIX END ---
             }
 
@@ -937,7 +967,7 @@
                     appState.activeGyms = [];
                     appState.clickableRegions = [];
                     csvData = [];
-                    renderApp();
+                    renderApp(); // This will trigger the empty state logic
                     showMessage('All cleared.', 'info');
                 }
             }
