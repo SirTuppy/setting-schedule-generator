@@ -764,3 +764,67 @@ body.dark-mode .template-hint {
         display: block !important;
     }
 }
+
+
+/* --- DARK MODE OVERRIDES FOR INSTRUCTIONS MODAL --- */
+
+/* 1. Quick Start: Dark Teal Background */
+body.dark-mode .quick-start {
+    background: #142926;
+    /* Very dark teal */
+    border-left-color: #4db8a8;
+}
+
+body.dark-mode .quick-start h4 {
+    color: #4db8a8;
+    /* Bright teal text */
+}
+
+/* 2. Save & Load: Dark Amber Background */
+body.dark-mode .save-load {
+    background: #2b2510;
+    /* Very dark yellow/brown */
+    border-left-color: #ffc107;
+}
+
+body.dark-mode .save-load h4 {
+    color: #ffd54f;
+    /* Bright yellow text */
+}
+
+/* 3. Email Integration: Dark Purple Background */
+body.dark-mode .email-integration {
+    background: #241224;
+    /* Very dark purple */
+    border-left-color: #ba68c8;
+}
+
+body.dark-mode .email-integration h4 {
+    color: #e1bee7;
+    /* Light purple text */
+}
+
+/* 4. Tip Box: Dark Blue Background */
+body.dark-mode .tip-box {
+    background: #0d2339;
+    /* Very dark blue */
+    border-left-color: #64b5f6;
+}
+
+body.dark-mode .tip-box p {
+    color: #bbdefb;
+    /* Light blue text */
+}
+
+body.dark-mode .tip-box strong {
+    color: #64b5f6;
+    /* Bright blue strong text */
+}
+
+/* 5. General Text Corrections for the Modal */
+body.dark-mode .help-section span,
+body.dark-mode .help-section li,
+body.dark-mode .help-section p {
+    color: #e0e0e0;
+    /* Ensure body text is readable light grey */
+}
