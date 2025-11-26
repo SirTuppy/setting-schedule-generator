@@ -70,7 +70,7 @@ const templateCoords = {
                 }
             },
             'FTW': {
-                weekStartDay: 'Sunday',
+                weekStartDay: 'Monday',
                 displayMode: 'merged',
                 ropeTypeName: 'Rope',
                 'boulders': {
@@ -81,4 +81,5 @@ const templateCoords = {
                     rightTable: { date: { x: 408, width: 42 }, location: { x: 457, width: 142 }, climbType: { x: 615, width: 67 }, setters: { x: 698, width: 52 } }
                 }
             }
+
         };
