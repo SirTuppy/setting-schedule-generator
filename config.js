@@ -1,6 +1,6 @@
 const templateCoords = {
             // DSN: Separate Routes and Boulders pages
-            'DSN': {
+            /*'DSN': {
                 weekStartDay: 'Sunday',
                 displayMode: 'merged',
                 ropeTypeName: 'Rope',
@@ -12,6 +12,22 @@ const templateCoords = {
                     rightTable: { date: { x: 408, width: 42 }, location: { x: 457, width: 142 }, climbType: { x: 615, width: 67 }, setters: { x: 698, width: 52 } }
                 },
                 'boulders': {
+                    header: { x: 740, y: 115 },
+                    tableTop: 775,
+                    rowHeight: 27,
+                    leftTable: { date: { x: 48, width: 42 }, location: { x: 94, width: 142 }, climbType: { x: 252, width: 67 }, setters: { x: 335, width: 52 } },
+                    rightTable: { date: { x: 408, width: 42 }, location: { x: 457, width: 142 }, climbType: { x: 615, width: 67 }, setters: { x: 698, width: 52 } }
+                }
+            },*/
+            // DSN: Now combined single page like PLN
+            'DSN': {
+                weekStartDay: 'Sunday',
+                displayMode: 'merged',
+                ropeTypeName: 'Rope',
+                'combined': {
+                    // VERIFY THESE COORDINATES:
+                    // I have copied your previous 'routes' coordinates here. 
+                    // If your new PNG template moved the table, update the X/Y values below.
                     header: { x: 740, y: 115 },
                     tableTop: 775,
                     rowHeight: 27,
@@ -83,3 +99,4 @@ const templateCoords = {
             }
 
         };
+
