@@ -567,7 +567,7 @@
                 const canvases = [];
                 const { scheduleByDay, dateRange } = gymData;
 
-                if (gymCode === 'GVN' || gymCode === 'PLN') {
+                if (gymCode === 'GVN' || gymCode === 'PLN' || gymCode === 'DSN') {
                     if (hasRoutes || hasBoulders) {
                         const canvas = await renderPage(gymCode, 'routes', scheduleByDay, dateRange); // 'routes' template is actually combined for these
                         // Tag canvas type to match regions
@@ -617,7 +617,7 @@
                         const gymCoords = templateCoords[gymCode];
                         if (!gymCoords) { resolve(canvas); return; }
 
-                        const coords = (gymCode === 'GVN' || gymCode === 'PLN') ? gymCoords['combined'] : gymCoords[type];
+                        const coords = (gymCode === 'GVN' || gymCode === 'PLN' || gymCode === 'DSN') ? gymCoords['combined'] : gymCoords[type];
                         if (!coords) { resolve(canvas); return; }
 
                         if (coords.header) {
@@ -858,7 +858,7 @@
                 let itemToUpdate = null;
                 let sourceArray = null;
 
-                if (region.gymCode === 'GVN' || region.gymCode === 'PLN') {
+                if (region.gymCode === 'GVN' || region.gymCode === 'PLN' || region.gymCode === 'DSN') {
                     itemToUpdate = dayData.routes.find(item => item.id === region.id);
                     if (itemToUpdate) sourceArray = dayData.routes;
                     else {
