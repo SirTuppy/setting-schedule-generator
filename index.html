@@ -567,7 +567,7 @@
 
             async function renderToCanvas(gymCode, gymData, hasRoutes, hasBoulders) {
                 const canvases = [];
-                const { scheduleByDay, dateRange } = gymData;
+                const { scheduleByDay, dateRange, fileDateRange } = gymData;
 
                 if (gymCode === 'GVN' || gymCode === 'PLN' || gymCode === 'DSN') {
                     if (hasRoutes || hasBoulders) {
