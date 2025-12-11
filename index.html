@@ -430,6 +430,7 @@
                     }
 
                     const dateRange = `${formatDate(startDay)}-${formatDate(endDay)}`;
+                    const fileDateRange = `${formatDateFile(startDay)}-${formatDateFile(endDay)}`; // Added
 
                     // Build Schedule Array
                     const scheduleByDay = Array(14).fill(null).map(() => ({ routes: [], boulders: [] }));
@@ -457,7 +458,8 @@
                     appState.schedules[gymCode] = {
                         scheduleByDay: scheduleByDay,
                         dateRange: dateRange,
-                        startDay: startDay
+                        startDay: startDay,
+                        fileDateRange: fileDateRange // Added
                     };
                     appState.activeGyms.push(gymCode);
                 });
@@ -572,24 +574,28 @@
                         const canvas = await renderPage(gymCode, 'routes', scheduleByDay, dateRange); // 'routes' template is actually combined for these
                         // Tag canvas type to match regions
                         canvas.dataset.canvasType = (gymCode === 'GVN') ? 'combined' : 'routes';
-                        canvases.push({ canvas, name: `${gymCode}_schedule.png` });
+                        // Updated name
+                        canvases.push({ canvas, name: `${fileDateRange}_${gymCode}_schedule.png` });
                     }
                 } else if (['HIL', 'DTN', 'FTW'].includes(gymCode)) {
                     if (hasBoulders) {
                         const canvas = await renderPage(gymCode, 'boulders', scheduleByDay, dateRange);
                         canvas.dataset.canvasType = 'boulders';
-                        canvases.push({ canvas, name: `${gymCode}_boulders_schedule.png` });
+                        // Updated name
+                        canvases.push({ canvas, name: `${fileDateRange}_${gymCode}_boulders_schedule.png` });
                     }
                 } else { // DSN and others with separate pages
                     if (hasRoutes) {
                         const canvas = await renderPage(gymCode, 'routes', scheduleByDay, dateRange);
                         canvas.dataset.canvasType = 'routes';
-                        canvases.push({ canvas, name: `${gymCode}_routes_schedule.png` });
+                        // Updated name
+                        canvases.push({ canvas, name: `${fileDateRange}_${gymCode}_routes_schedule.png` });
                     }
                     if (hasBoulders) {
                         const canvas = await renderPage(gymCode, 'boulders', scheduleByDay, dateRange);
                         canvas.dataset.canvasType = 'boulders';
-                        canvases.push({ canvas, name: `${gymCode}_boulders_schedule.png` });
+                        // Updated name
+                        canvases.push({ canvas, name: `${fileDateRange}_${gymCode}_boulders_schedule.png` });
                     }
                 }
                 return canvases;
@@ -922,7 +928,8 @@
                     const dataToSave = {
                         scheduleByDay: data.scheduleByDay,
                         dateRange: data.dateRange,
-                        startDay: data.startDay.toISOString()
+                        startDay: data.startDay.toISOString(),
+                        fileDateRange: data.fileDateRange // Added
                     };
                     localStorage.setItem(key, JSON.stringify(dataToSave));
                     savedCount++;
@@ -946,7 +953,8 @@
                         appState.schedules[gymCode] = {
                             scheduleByDay: parsedData.scheduleByDay,
                             dateRange: parsedData.dateRange,
-                            startDay: new Date(parsedData.startDay)
+                            startDay: new Date(parsedData.startDay),
+                            fileDateRange: parsedData.fileDateRange // Added
                         };
                         appState.activeGyms.push(gymCode);
                         loadedCount++;
@@ -1086,6 +1094,15 @@
                     if (currentGymWalls[part]) walls.push(part);
                 }
                 return [...new Set(walls)];
+            }
+
+            // New Function
+            function formatDateFile(date) {
+                const d = new Date(date);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}${month}${day}`;
             }
 
             function formatDate(date) {
